@@ -1,0 +1,212 @@
+[
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "zipfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "zipfile",
+        "description": "zipfile",
+        "detail": "zipfile",
+        "documentation": {}
+    },
+    {
+        "label": "Converter",
+        "importPath": "pdf2docx",
+        "description": "pdf2docx",
+        "isExtraImport": true,
+        "detail": "pdf2docx",
+        "documentation": {}
+    },
+    {
+        "label": "PdfMerger",
+        "importPath": "PyPDF2",
+        "description": "PyPDF2",
+        "isExtraImport": true,
+        "detail": "PyPDF2",
+        "documentation": {}
+    },
+    {
+        "label": "PdfReader",
+        "importPath": "PyPDF2",
+        "description": "PyPDF2",
+        "isExtraImport": true,
+        "detail": "PyPDF2",
+        "documentation": {}
+    },
+    {
+        "label": "PdfWriter",
+        "importPath": "PyPDF2",
+        "description": "PyPDF2",
+        "isExtraImport": true,
+        "detail": "PyPDF2",
+        "documentation": {}
+    },
+    {
+        "label": "convert_from_path",
+        "importPath": "pdf2image",
+        "description": "pdf2image",
+        "isExtraImport": true,
+        "detail": "pdf2image",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "pdf_to_word",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF→Word failed - {e}\")\n        sys.exit(1)\n# ------------------ Word → PDF ------------------",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "word_to_pdf",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def word_to_pdf(input_file, output_file):\n    try:\n        subprocess.run(\n            [\n                LIBREOFFICE_PATH,\n                \"--headless\",\n                \"--convert-to\",\n                \"pdf\",\n                \"--outdir\",\n                os.path.dirname(output_file),",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "pdf_merge",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def pdf_merge(input_files, output_file):\n    try:\n        merger = PdfMerger()\n        for pdf in input_files:\n            merger.append(pdf)\n        merger.write(output_file)\n        merger.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF merge failed - {e}\")",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "parse_ranges",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def parse_ranges(ranges_str):\n    result = []\n    for part in ranges_str.split(\",\"):\n        part = part.strip()\n        if \"-\" in part:\n            a, b = part.split(\"-\")\n            result.append((int(a), int(b)))\n        else:\n            v = int(part)\n            result.append((v, v))",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "pdf_split",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def pdf_split(input_file, ranges_str, output_dir):\n    try:\n        reader = PdfReader(input_file)\n        ranges = parse_ranges(ranges_str)\n        if not os.path.exists(output_dir):\n            os.makedirs(output_dir)\n        if len(ranges) == 1:\n            start, end = ranges[0]\n            writer = PdfWriter()\n            for i in range(start - 1, end):",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "image_to_pdf",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def image_to_pdf(input_files, output_file):\n    try:\n        from reportlab.lib.pagesizes import A4\n        from reportlab.pdfgen import canvas\n        from reportlab.lib.utils import ImageReader\n        if not input_files:\n            print(\"ERROR: No input images provided\")\n            sys.exit(1)\n        page_width, page_height = A4\n        c = canvas.Canvas(output_file, pagesize=A4)",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "LIBREOFFICE_PATH",
+        "kind": 5,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "LIBREOFFICE_PATH = r\"C:\\Program Files\\LibreOffice\\program\\soffice.exe\"\nPOPPLER_PATH = r\"C:\\poppler\\bin\"  # must contain pdftoppm.exe & pdfinfo.exe\n# ------------------ PDF → Word ------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "POPPLER_PATH",
+        "kind": 5,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "POPPLER_PATH = r\"C:\\poppler\\bin\"  # must contain pdftoppm.exe & pdfinfo.exe\n# ------------------ PDF → Word ------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF→Word failed - {e}\")",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
+        "label": "_Known",
+        "kind": 6,
+        "importPath": "frontend.node_modules.flatted.python.flatted",
+        "description": "frontend.node_modules.flatted.python.flatted",
+        "peekOfCode": "class _Known:\n    def __init__(self):\n        self.key = []\n        self.value = []\nclass _String:\n    def __init__(self, value):\n        self.value = value\ndef _array_keys(value):\n    keys = []\n    i = 0",
+        "detail": "frontend.node_modules.flatted.python.flatted",
+        "documentation": {}
+    },
+    {
+        "label": "_String",
+        "kind": 6,
+        "importPath": "frontend.node_modules.flatted.python.flatted",
+        "description": "frontend.node_modules.flatted.python.flatted",
+        "peekOfCode": "class _String:\n    def __init__(self, value):\n        self.value = value\ndef _array_keys(value):\n    keys = []\n    i = 0\n    for _ in value:\n        keys.append(i)\n        i += 1\n    return keys",
+        "detail": "frontend.node_modules.flatted.python.flatted",
+        "documentation": {}
+    },
+    {
+        "label": "parse",
+        "kind": 2,
+        "importPath": "frontend.node_modules.flatted.python.flatted",
+        "description": "frontend.node_modules.flatted.python.flatted",
+        "peekOfCode": "def parse(value, *args, **kwargs):\n    json = _json.loads(value, *args, **kwargs)\n    wrapped = []\n    for value in json:\n        wrapped.append(_wrap(value))\n    input = []\n    for value in wrapped:\n        if isinstance(value, _String):\n            input.append(value.value)\n        else:",
+        "detail": "frontend.node_modules.flatted.python.flatted",
+        "documentation": {}
+    },
+    {
+        "label": "stringify",
+        "kind": 2,
+        "importPath": "frontend.node_modules.flatted.python.flatted",
+        "description": "frontend.node_modules.flatted.python.flatted",
+        "peekOfCode": "def stringify(value, *args, **kwargs):\n    known = _Known()\n    input = []\n    output = []\n    i = int(_index(known, input, value))\n    while i < len(input):\n        output.append(_transform(known, input, input[i]))\n        i += 1\n    return _json.dumps(output, *args, **kwargs)",
+        "detail": "frontend.node_modules.flatted.python.flatted",
+        "documentation": {}
+    }
+]
