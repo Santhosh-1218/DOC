@@ -120,6 +120,15 @@
         "documentation": {}
     },
     {
+        "label": "excel_to_pdf",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def excel_to_pdf(input_file, output_file):\n    try:\n        subprocess.run(\n            [\n                LIBREOFFICE_PATH,\n                \"--headless\",\n                \"--convert-to\",\n                \"pdf\",\n                \"--outdir\",\n                os.path.dirname(output_file),",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
         "label": "pdf_merge",
         "kind": 2,
         "importPath": "backend.tools",

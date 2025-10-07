@@ -8,7 +8,7 @@ from PyPDF2 import PdfMerger, PdfReader, PdfWriter
 from pdf2image import convert_from_path
 from PIL import Image
 
-# ✅ Adjust these paths to your local system
+# ✅ Adjust these paths for your local setup
 LIBREOFFICE_PATH = r"C:\Program Files\LibreOffice\program\soffice.exe"
 POPPLER_PATH = r"C:\poppler\bin"  # must contain pdftoppm.exe & pdfinfo.exe
 
@@ -52,6 +52,36 @@ def word_to_pdf(input_file, output_file):
         print(output_file)
     except Exception as e:
         print(f"ERROR: Word→PDF failed - {e}")
+        sys.exit(1)
+
+
+# ------------------ Excel → PDF ------------------
+def excel_to_pdf(input_file, output_file):
+    try:
+        subprocess.run(
+            [
+                LIBREOFFICE_PATH,
+                "--headless",
+                "--convert-to",
+                "pdf",
+                "--outdir",
+                os.path.dirname(output_file),
+                input_file,
+            ],
+            check=True,
+        )
+
+        generated_pdf = os.path.join(
+            os.path.dirname(output_file),
+            os.path.splitext(os.path.basename(input_file))[0] + ".pdf",
+        )
+
+        if os.path.exists(generated_pdf):
+            os.replace(generated_pdf, output_file)
+
+        print(output_file)
+    except Exception as e:
+        print(f"ERROR: Excel→PDF failed - {e}")
         sys.exit(1)
 
 
@@ -179,13 +209,14 @@ if __name__ == "__main__":
     elif tool == "word-to-pdf" and len(sys.argv) == 4:
         word_to_pdf(sys.argv[2], sys.argv[3])
 
+    elif tool == "excel-to-pdf" and len(sys.argv) == 4:
+        excel_to_pdf(sys.argv[2], sys.argv[3])
+
     elif tool == "pdf-merge" and len(sys.argv) >= 5:
         pdf_merge(sys.argv[2:-1], sys.argv[-1])
 
     elif tool == "pdf-split" and len(sys.argv) == 5:
         pdf_split(sys.argv[2], sys.argv[3], sys.argv[4])
-
-    
 
     elif tool == "image-to-pdf" and len(sys.argv) >= 4:
         image_to_pdf(sys.argv[2:-1], sys.argv[-1])

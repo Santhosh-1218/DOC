@@ -21,7 +21,6 @@ import {
   Shrink,
   Wrench,
   Edit3,
-  Camera,
   Presentation,
 } from "lucide-react";
 
@@ -37,7 +36,7 @@ export default function Tools() {
     { slug: "pdf-editor", name: "PDF Editor", desc: "Edit and modify your PDF files", icon: Edit3 },
     { slug: "image-to-pdf", name: "Image to PDF", desc: "Convert images into a PDF file", icon: Image },
     { slug: "pdf-to-image", name: "PDF to Image", desc: "Save PDF pages as images", icon: Download },
-    { slug: "screenshot-edit", name: "Screenshot Edit", desc: "Capture and annotate screenshots", icon: Camera },
+    // 🟣 Screenshot Edit tool removed here
     { slug: "repair-pdf", name: "Repair PDF", desc: "Fix corrupted or damaged PDF files", icon: Wrench },
     { slug: "text-extractor", name: "Text Extractor", desc: "Extract text from PDFs", icon: Upload },
     { slug: "password-protect", name: "Password Protect", desc: "Add password to a PDF", icon: Lock },
@@ -56,7 +55,6 @@ export default function Tools() {
         <div className="mx-auto max-w-7xl">
           {/* Top Section */}
           <div className="mb-10">
-            {/* Back button */}
             <div className="mb-6">
               <button
                 onClick={() => navigate("/home")}
@@ -67,7 +65,6 @@ export default function Tools() {
               </button>
             </div>
 
-            {/* Heading + Description */}
             <div className="text-center">
               <h2 className="text-3xl font-extrabold text-gray-900">
                 All Your PDF Tools, One Place –{" "}

@@ -14,25 +14,29 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// ✅ Allow your frontend on port 3000
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-// __dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static uploads
+// ✅ Serve uploaded files
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// Routes
+// ✅ API routes
 app.use("/api", authRoutes);
 app.use("/api/docs", docsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/tools", toolsRoutes);
+app.use("/api/tools", toolsRoutes); // 🧩 Mount tools (Excel-to-PDF lives here)
 
-
-
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));

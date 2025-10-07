@@ -49,7 +49,7 @@ DOCS/
 │   │   │   │   ├── unlockPdf.js
 │   │   │   │   ├── esignPdf.js
 │   │   │   │   ├── docTranslator.js
-│   │   │   │   ├── screenshotEdit.js
+│   │   │   │   ├── 
 │   │   │   │   └── repairPdf.js
 │   │   │   └── tools.js         # Central tools router
 │   │
@@ -113,7 +113,7 @@ DOCS/
 │   │   │       ├── unlock-pdf.jsx
 │   │   │       ├── esign-pdf.jsx
 │   │   │       ├── doc-translator.jsx
-│   │   │       ├── screenshot-edit.jsx
+│   │   │       ├
 │   │   │       └── repair-pdf.jsx
 │   │
 │   │   ├── styles/

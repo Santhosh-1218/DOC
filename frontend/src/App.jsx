@@ -16,7 +16,6 @@ import PdfSplit from "./pages/tools/pdf-split";
 import PdfCompress from "./pages/tools/pdf-compress";
 import PdfEditor from "./pages/tools/pdf-editor";
 import RepairPdf from "./pages/tools/repair-pdf";
-import ScreenshotEdit from "./pages/tools/screenshot-edit";
 import ImageToPdf from "./pages/tools/image-to-pdf";
 import PdfToImage from "./pages/tools/pdf-to-image";
 import TextExtractor from "./pages/tools/text-extractor";
@@ -52,7 +51,6 @@ function App() {
         <Route path="/tools/pdf-compress" element={<PdfCompress />} />
         <Route path="/tools/pdf-editor" element={<PdfEditor />} />
         <Route path="/tools/repair-pdf" element={<RepairPdf />} />
-        <Route path="/tools/screenshot-edit" element={<ScreenshotEdit />} />
         <Route path="/tools/image-to-pdf" element={<ImageToPdf />} />
         <Route path="/tools/pdf-to-image" element={<PdfToImage />} />
         <Route path="/tools/text-extractor" element={<TextExtractor />} />
