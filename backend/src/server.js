@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
@@ -15,7 +15,6 @@ connectDB();
 
 const app = express();
 
-// ✅ Allow your frontend on port 3000
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -25,18 +24,27 @@ app.use(
 
 app.use(express.json());
 
+// ✅ Proper directory setup
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-// ✅ Serve uploaded files
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// ✅ Serve the real uploads folder (one level above /src)
+const uploadsDir = path.resolve(__dirname, "../uploads");
+app.use("/uploads", express.static(uploadsDir));
 
-// ✅ API routes
+console.log("🗂 Serving uploads from:", uploadsDir);
+
+// ✅ Routes
 app.use("/api", authRoutes);
 app.use("/api/docs", docsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/tools", toolsRoutes); // 🧩 Mount tools (Excel-to-PDF lives here)
+app.use("/api/tools", toolsRoutes);
+
+// ✅ Root check
+app.get("/", (req, res) => res.send("✅ Backend running"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});

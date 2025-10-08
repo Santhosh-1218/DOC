@@ -9,6 +9,8 @@ import pdfToImage from "./tools/pdfToImage.js";
 import passwordProtect from "./tools/passwordProtect.js";
 import unlockPdf from "./tools/unlockPdf.js";
 import excelToPdf from "./tools/excelToPdf.js"; // ✅ Import new route
+import powerpointToPdf from "./tools/powerpointToPdf.js";
+import docTranslator from "./tools/docTranslator.js";
 
 const router = express.Router();
 
@@ -22,5 +24,7 @@ router.use("/pdf-to-image", pdfToImage);
 router.use("/password-protect", passwordProtect);
 router.use("/unlock-pdf", unlockPdf);
 router.use("/excel-to-pdf", excelToPdf); // ✅ Excel→PDF route
+router.use("/ppt-to-pdf", powerpointToPdf);
+router.use("/doc-translator", docTranslator);
 
 export default router;
