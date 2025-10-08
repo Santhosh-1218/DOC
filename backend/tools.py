@@ -8,12 +8,14 @@ from PyPDF2 import PdfMerger, PdfReader, PdfWriter
 from pdf2image import convert_from_path
 from PIL import Image
 
-# ✅ Adjust these paths for your local setup
+# ✅ Configure paths
 LIBREOFFICE_PATH = r"C:\Program Files\LibreOffice\program\soffice.exe"
-POPPLER_PATH = r"C:\poppler\bin"  # must contain pdftoppm.exe & pdfinfo.exe
+POPPLER_PATH = r"C:\poppler\bin"  # Must contain pdftoppm.exe & pdfinfo.exe
 
 
-# ------------------ PDF → Word ------------------
+# ------------------------------------------------------------
+# 🧩 PDF → Word
+# ------------------------------------------------------------
 def pdf_to_word(input_file, output_file):
     try:
         cv = Converter(input_file)
@@ -25,7 +27,9 @@ def pdf_to_word(input_file, output_file):
         sys.exit(1)
 
 
-# ------------------ Word → PDF ------------------
+# ------------------------------------------------------------
+# 🧩 Word → PDF
+# ------------------------------------------------------------
 def word_to_pdf(input_file, output_file):
     try:
         subprocess.run(
@@ -40,22 +44,21 @@ def word_to_pdf(input_file, output_file):
             ],
             check=True,
         )
-
         generated_pdf = os.path.join(
             os.path.dirname(output_file),
             os.path.splitext(os.path.basename(input_file))[0] + ".pdf",
         )
-
         if os.path.exists(generated_pdf):
             os.replace(generated_pdf, output_file)
-
         print(output_file)
     except Exception as e:
         print(f"ERROR: Word→PDF failed - {e}")
         sys.exit(1)
 
 
-# ------------------ Excel → PDF ------------------
+# ------------------------------------------------------------
+# 🧩 Excel → PDF
+# ------------------------------------------------------------
 def excel_to_pdf(input_file, output_file):
     try:
         subprocess.run(
@@ -70,22 +73,21 @@ def excel_to_pdf(input_file, output_file):
             ],
             check=True,
         )
-
         generated_pdf = os.path.join(
             os.path.dirname(output_file),
             os.path.splitext(os.path.basename(input_file))[0] + ".pdf",
         )
-
         if os.path.exists(generated_pdf):
             os.replace(generated_pdf, output_file)
-
         print(output_file)
     except Exception as e:
         print(f"ERROR: Excel→PDF failed - {e}")
         sys.exit(1)
 
 
-# ------------------ PDF Merge ------------------
+# ------------------------------------------------------------
+# 🧩 PDF Merge
+# ------------------------------------------------------------
 def pdf_merge(input_files, output_file):
     try:
         merger = PdfMerger()
@@ -99,7 +101,9 @@ def pdf_merge(input_files, output_file):
         sys.exit(1)
 
 
-# ------------------ Helper: Range Parser ------------------
+# ------------------------------------------------------------
+# 🧩 Range Parser Helper
+# ------------------------------------------------------------
 def parse_ranges(ranges_str):
     result = []
     for part in ranges_str.split(","):
@@ -113,14 +117,14 @@ def parse_ranges(ranges_str):
     return result
 
 
-# ------------------ PDF Split ------------------
+# ------------------------------------------------------------
+# 🧩 PDF Split
+# ------------------------------------------------------------
 def pdf_split(input_file, ranges_str, output_dir):
     try:
         reader = PdfReader(input_file)
         ranges = parse_ranges(ranges_str)
-
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
 
         if len(ranges) == 1:
             start, end = ranges[0]
@@ -150,7 +154,9 @@ def pdf_split(input_file, ranges_str, output_dir):
         sys.exit(1)
 
 
-# ------------------ 🖼️ Image → PDF ------------------
+# ------------------------------------------------------------
+# 🧩 Image → PDF
+# ------------------------------------------------------------
 def image_to_pdf(input_files, output_file):
     try:
         from reportlab.lib.pagesizes import A4
@@ -194,8 +200,45 @@ def image_to_pdf(input_files, output_file):
         print(f"ERROR: Image→PDF failed - {e}")
         sys.exit(1)
 
+# ------------------------------------------------------------
+# 🧩 PDF → Image
+# ------------------------------------------------------------
+def pdf_to_image(input_file, output_dir):
+    try:
+        # ✅ Correct Poppler path for your system
+        POPPLER_PATH = r"C:\poppler-25.07.0\Library\bin"
 
-# ------------------ CLI Entry ------------------
+        # Ensure output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Convert PDF pages to images
+        pages = convert_from_path(input_file, dpi=200, poppler_path=POPPLER_PATH)
+        image_paths = []
+
+        # Save each page as PNG
+        for i, page in enumerate(pages):
+            img_path = os.path.join(output_dir, f"page_{i+1}.png")
+            page.save(img_path, "PNG")
+            image_paths.append(img_path)
+
+        # If multiple pages → create ZIP
+        if len(image_paths) > 1:
+            zip_path = os.path.join(output_dir, "images.zip")
+            with zipfile.ZipFile(zip_path, "w") as zf:
+                for img_path in image_paths:
+                    zf.write(img_path, os.path.basename(img_path))
+            print(zip_path)
+        else:
+            print(image_paths[0])
+
+    except Exception as e:
+        print(f"ERROR: PDF→Image failed - {e}")
+        sys.exit(1)
+
+
+# ------------------------------------------------------------
+# 🧩 CLI Entry Point
+# ------------------------------------------------------------
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python tools.py <tool> <args>")
@@ -203,24 +246,32 @@ if __name__ == "__main__":
 
     tool = sys.argv[1]
 
-    if tool == "pdf-to-word" and len(sys.argv) == 4:
-        pdf_to_word(sys.argv[2], sys.argv[3])
+    try:
+        if tool == "pdf-to-word" and len(sys.argv) == 4:
+            pdf_to_word(sys.argv[2], sys.argv[3])
 
-    elif tool == "word-to-pdf" and len(sys.argv) == 4:
-        word_to_pdf(sys.argv[2], sys.argv[3])
+        elif tool == "word-to-pdf" and len(sys.argv) == 4:
+            word_to_pdf(sys.argv[2], sys.argv[3])
 
-    elif tool == "excel-to-pdf" and len(sys.argv) == 4:
-        excel_to_pdf(sys.argv[2], sys.argv[3])
+        elif tool == "excel-to-pdf" and len(sys.argv) == 4:
+            excel_to_pdf(sys.argv[2], sys.argv[3])
 
-    elif tool == "pdf-merge" and len(sys.argv) >= 5:
-        pdf_merge(sys.argv[2:-1], sys.argv[-1])
+        elif tool == "pdf-merge" and len(sys.argv) >= 5:
+            pdf_merge(sys.argv[2:-1], sys.argv[-1])
 
-    elif tool == "pdf-split" and len(sys.argv) == 5:
-        pdf_split(sys.argv[2], sys.argv[3], sys.argv[4])
+        elif tool == "pdf-split" and len(sys.argv) == 5:
+            pdf_split(sys.argv[2], sys.argv[3], sys.argv[4])
 
-    elif tool == "image-to-pdf" and len(sys.argv) >= 4:
-        image_to_pdf(sys.argv[2:-1], sys.argv[-1])
+        elif tool == "image-to-pdf" and len(sys.argv) >= 4:
+            image_to_pdf(sys.argv[2:-1], sys.argv[-1])
 
-    else:
-        print(f"ERROR: Invalid usage or unknown tool '{tool}'")
+        elif tool == "pdf-to-image" and len(sys.argv) == 4:
+            pdf_to_image(sys.argv[2], sys.argv[3])
+
+        else:
+            print(f"ERROR: Invalid usage or unknown tool '{tool}'")
+            sys.exit(1)
+
+    except Exception as err:
+        print(f"ERROR: {tool} failed - {err}")
         sys.exit(1)

@@ -7,6 +7,12 @@ import Profile from "./pages/Profile";
 import Favorites from "./pages/Favorites";
 import Tools from "./pages/Tools";
 import DocAI from "./pages/DocAI";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Feedback from "./pages/Feedback";
+import HelpCenter from "./pages/HelpCenter";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ComingSoon from "./pages/ComingSoon";
 
 // 🛠 Import all tools (updated list)
 import PdfToWord from "./pages/tools/pdf-to-word";
@@ -15,10 +21,9 @@ import PdfMerge from "./pages/tools/pdf-merge";
 import PdfSplit from "./pages/tools/pdf-split";
 import PdfCompress from "./pages/tools/pdf-compress";
 import PdfEditor from "./pages/tools/pdf-editor";
-import RepairPdf from "./pages/tools/repair-pdf";
 import ImageToPdf from "./pages/tools/image-to-pdf";
 import PdfToImage from "./pages/tools/pdf-to-image";
-import TextExtractor from "./pages/tools/text-extractor";
+
 import PasswordProtect from "./pages/tools/password-protect";
 import UnlockPdf from "./pages/tools/unlock-pdf";
 import ExcelToPdf from "./pages/tools/excel-to-pdf";
@@ -42,6 +47,13 @@ function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/tools" element={<Tools />} />
         <Route path="/DocAI" element={<DocAI />} />
+        <Route path="/about" element={<About />} />
+       <Route path="/contact" element={<Contact />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+       <Route path="/coming-soon" element={<ComingSoon />} />
+
 
         {/* 🛠 Tool Pages */}
         <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
@@ -50,10 +62,8 @@ function App() {
         <Route path="/tools/pdf-split" element={<PdfSplit />} />
         <Route path="/tools/pdf-compress" element={<PdfCompress />} />
         <Route path="/tools/pdf-editor" element={<PdfEditor />} />
-        <Route path="/tools/repair-pdf" element={<RepairPdf />} />
         <Route path="/tools/image-to-pdf" element={<ImageToPdf />} />
         <Route path="/tools/pdf-to-image" element={<PdfToImage />} />
-        <Route path="/tools/text-extractor" element={<TextExtractor />} />
         <Route path="/tools/password-protect" element={<PasswordProtect />} />
         <Route path="/tools/unlock-pdf" element={<UnlockPdf />} />
         <Route path="/tools/excel-to-pdf" element={<ExcelToPdf />} />

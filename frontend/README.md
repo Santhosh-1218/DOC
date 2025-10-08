@@ -44,13 +44,13 @@ DOCS/
 │   │   │   │   ├── imageToPdf.js
 │   │   │   │   ├── excelToPdf.js
 │   │   │   │   ├── powerpointToPdf.js
-│   │   │   │   ├── textExtractor.js
+│   │   │   │   ├
 │   │   │   │   ├── passwordProtect.js
 │   │   │   │   ├── unlockPdf.js
 │   │   │   │   ├── esignPdf.js
 │   │   │   │   ├── docTranslator.js
-│   │   │   │   ├── 
-│   │   │   │   └── repairPdf.js
+│   │   │   │   
+│   │   │   │   
 │   │   │   └── tools.js         # Central tools router
 │   │
 │   │   └── utils/               # Helpers
@@ -108,13 +108,13 @@ DOCS/
 │   │   │       ├── image-to-pdf.jsx
 │   │   │       ├── excel-to-pdf.jsx
 │   │   │       ├── powerpoint-to-pdf.jsx
-│   │   │       ├── text-extractor.jsx
+│   │   │       ├── 
 │   │   │       ├── password-protect.jsx
 │   │   │       ├── unlock-pdf.jsx
 │   │   │       ├── esign-pdf.jsx
 │   │   │       ├── doc-translator.jsx
-│   │   │       ├
-│   │   │       └── repair-pdf.jsx
+│   │   │       
+│   │   │       
 │   │
 │   │   ├── styles/
 │   │   │   └── home.css

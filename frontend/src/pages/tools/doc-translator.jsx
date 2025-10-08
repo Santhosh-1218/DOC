@@ -1,93 +1,70 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { ArrowLeft, Loader2, Globe, CheckCircle } from "lucide-react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Languages, Clock } from "lucide-react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
-export default function DocTranslator() {
+export default function DocTranslatorComingSoon() {
   const navigate = useNavigate();
-  const [text, setText] = useState("");
-  const [translated, setTranslated] = useState("");
-  const [targetLang, setTargetLang] = useState("es");
-  const [loading, setLoading] = useState(false);
-
-  const handleTranslate = async () => {
-    if (!text.trim()) return alert("Please enter text to translate!");
-    setLoading(true);
-    try {
-      const res = await axios.post("http://localhost:5000/api/tools/doc-translator", {
-        text,
-        targetLang,
-      });
-      setTranslated(res.data.translatedText);
-    } catch (err) {
-      console.error(err);
-      alert("Translation failed. Try again!");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
       <Header />
-      <main className="flex-1 px-6 py-10">
-        <div className="max-w-4xl p-8 mx-auto bg-white shadow-lg rounded-2xl">
-          <button
-            onClick={() => navigate("/tools")}
-            className="flex items-center gap-2 mb-6 text-gray-700 hover:text-purple-600"
-          >
-            <ArrowLeft /> Back to Tools
-          </button>
 
-          <h2 className="flex items-center gap-2 mb-4 text-2xl font-bold text-gray-800">
-            <Globe className="text-purple-600" /> Document Translator
-          </h2>
-
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Enter or paste text here..."
-            className="w-full h-40 p-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-500"
-          />
-
-          <div className="flex items-center justify-between mt-4">
-            <select
-              value={targetLang}
-              onChange={(e) => setTargetLang(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="hi">Hindi</option>
-              <option value="te">Telugu</option>
-              <option value="ta">Tamil</option>
-            </select>
-
+      <main className="flex-1 px-4 py-10 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          {/* Back button */}
+          <div className="mb-6">
             <button
-              onClick={handleTranslate}
-              disabled={loading}
-              className="flex items-center gap-2 px-6 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              onClick={() => navigate("/tools")}
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
             >
-              {loading ? <Loader2 className="animate-spin" /> : <CheckCircle />}
-              {loading ? "Translating..." : "Translate"}
+              <ArrowLeft size={18} />
+              <span className="font-medium">Back to Tools</span>
             </button>
           </div>
 
-          {translated && (
-            <div className="mt-6">
-              <h3 className="mb-2 text-lg font-semibold text-gray-800">Translated Text:</h3>
-              <textarea
-                readOnly
-                value={translated}
-                className="w-full h-40 p-4 border border-gray-300 rounded-lg bg-gray-50"
-              />
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
+              <Languages className="w-8 h-8 text-purple-600" />
             </div>
-          )}
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">
+              Document Translator
+            </h1>
+            <p className="text-lg text-gray-600">
+              Instantly translate your documents into multiple languages —
+              Coming Soon!
+            </p>
+          </div>
+
+          {/* Main Container */}
+          <div className="p-10 text-center bg-white shadow-lg rounded-2xl">
+            <div className="flex flex-col items-center justify-center space-y-6">
+              <Clock className="w-12 h-12 text-purple-600 animate-pulse" />
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Coming Soon
+              </h2>
+              <p className="max-w-md text-gray-600">
+                We’re crafting a smart translation tool that lets you translate
+                text documents instantly — while preserving their original
+                layout and style.
+              </p>
+
+              {/* Progress Bar */}
+              <div className="w-64 h-2 mt-4 overflow-hidden bg-gray-200 rounded-full">
+                <div className="w-2/3 h-2 bg-purple-600 rounded-full animate-pulse"></div>
+              </div>
+
+              {/* Note */}
+              <p className="mt-4 text-sm text-gray-500">
+                Stay tuned — this feature will be available very soon.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

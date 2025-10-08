@@ -11,6 +11,9 @@ import unlockPdf from "./tools/unlockPdf.js";
 import excelToPdf from "./tools/excelToPdf.js"; // ✅ Import new route
 import powerpointToPdf from "./tools/powerpointToPdf.js";
 import docTranslator from "./tools/docTranslator.js";
+import pdfEditor from "./tools/pdfEditor.js";
+
+
 
 const router = express.Router();
 
@@ -26,5 +29,8 @@ router.use("/unlock-pdf", unlockPdf);
 router.use("/excel-to-pdf", excelToPdf); // ✅ Excel→PDF route
 router.use("/ppt-to-pdf", powerpointToPdf);
 router.use("/doc-translator", docTranslator);
+router.use("/pdf-editor", pdfEditor);
+
+
 
 export default router;

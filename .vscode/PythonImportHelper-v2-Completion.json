@@ -106,7 +106,7 @@
         "kind": 2,
         "importPath": "backend.tools",
         "description": "backend.tools",
-        "peekOfCode": "def pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF→Word failed - {e}\")\n        sys.exit(1)\n# ------------------ Word → PDF ------------------",
+        "peekOfCode": "def pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF→Word failed - {e}\")\n        sys.exit(1)\n# ------------------------------------------------------------",
         "detail": "backend.tools",
         "documentation": {}
     },
@@ -151,7 +151,7 @@
         "kind": 2,
         "importPath": "backend.tools",
         "description": "backend.tools",
-        "peekOfCode": "def pdf_split(input_file, ranges_str, output_dir):\n    try:\n        reader = PdfReader(input_file)\n        ranges = parse_ranges(ranges_str)\n        if not os.path.exists(output_dir):\n            os.makedirs(output_dir)\n        if len(ranges) == 1:\n            start, end = ranges[0]\n            writer = PdfWriter()\n            for i in range(start - 1, end):",
+        "peekOfCode": "def pdf_split(input_file, ranges_str, output_dir):\n    try:\n        reader = PdfReader(input_file)\n        ranges = parse_ranges(ranges_str)\n        os.makedirs(output_dir, exist_ok=True)\n        if len(ranges) == 1:\n            start, end = ranges[0]\n            writer = PdfWriter()\n            for i in range(start - 1, end):\n                if i < len(reader.pages):",
         "detail": "backend.tools",
         "documentation": {}
     },
@@ -165,11 +165,20 @@
         "documentation": {}
     },
     {
+        "label": "pdf_to_image",
+        "kind": 2,
+        "importPath": "backend.tools",
+        "description": "backend.tools",
+        "peekOfCode": "def pdf_to_image(input_file, output_dir):\n    try:\n        # ✅ Correct Poppler path for your system\n        POPPLER_PATH = r\"C:\\poppler-25.07.0\\Library\\bin\"\n        # Ensure output directory exists\n        os.makedirs(output_dir, exist_ok=True)\n        # Convert PDF pages to images\n        pages = convert_from_path(input_file, dpi=200, poppler_path=POPPLER_PATH)\n        image_paths = []\n        # Save each page as PNG",
+        "detail": "backend.tools",
+        "documentation": {}
+    },
+    {
         "label": "LIBREOFFICE_PATH",
         "kind": 5,
         "importPath": "backend.tools",
         "description": "backend.tools",
-        "peekOfCode": "LIBREOFFICE_PATH = r\"C:\\Program Files\\LibreOffice\\program\\soffice.exe\"\nPOPPLER_PATH = r\"C:\\poppler\\bin\"  # must contain pdftoppm.exe & pdfinfo.exe\n# ------------------ PDF → Word ------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:",
+        "peekOfCode": "LIBREOFFICE_PATH = r\"C:\\Program Files\\LibreOffice\\program\\soffice.exe\"\nPOPPLER_PATH = r\"C:\\poppler\\bin\"  # Must contain pdftoppm.exe & pdfinfo.exe\n# ------------------------------------------------------------\n# 🧩 PDF → Word\n# ------------------------------------------------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()",
         "detail": "backend.tools",
         "documentation": {}
     },
@@ -178,7 +187,7 @@
         "kind": 5,
         "importPath": "backend.tools",
         "description": "backend.tools",
-        "peekOfCode": "POPPLER_PATH = r\"C:\\poppler\\bin\"  # must contain pdftoppm.exe & pdfinfo.exe\n# ------------------ PDF → Word ------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)\n    except Exception as e:\n        print(f\"ERROR: PDF→Word failed - {e}\")",
+        "peekOfCode": "POPPLER_PATH = r\"C:\\poppler\\bin\"  # Must contain pdftoppm.exe & pdfinfo.exe\n# ------------------------------------------------------------\n# 🧩 PDF → Word\n# ------------------------------------------------------------\ndef pdf_to_word(input_file, output_file):\n    try:\n        cv = Converter(input_file)\n        cv.convert(output_file, start=0, end=None)\n        cv.close()\n        print(output_file)",
         "detail": "backend.tools",
         "documentation": {}
     },

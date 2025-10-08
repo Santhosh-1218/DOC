@@ -62,7 +62,7 @@ export default function Profile() {
     { label: "Contact", path: "/contact" },
     { label: "Feedback", path: "/feedback" },
     { label: "Help Center", path: "/help" },
-    { label: "Privacy Policy", path: "/privacy" },
+    { label: "Privacy Policy", path: "/privacy-policy" },
   ];
 
   // Fetch profile

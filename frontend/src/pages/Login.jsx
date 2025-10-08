@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { User, Lock, UserPlus, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/logo.jpg";
@@ -62,7 +62,7 @@ const Login = () => {
           />
         </div>
 
-        {/* Right Section - Form */}
+        {/* Right Section - Login Form */}
         <div className="flex flex-col justify-center flex-1 p-6 md:p-10">
           <h2 className="mb-6 text-2xl font-bold text-gray-800 sm:text-3xl">
             Welcome Back
@@ -120,26 +120,15 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Social Buttons */}
-          <div className="flex flex-col justify-around gap-4 mt-6 sm:flex-row">
-            <button
-              onClick={() => navigate("/signup")}
-              type="button"
-              className="flex items-center justify-center gap-2 px-4 py-2 border rounded-full hover:bg-gray-100"
+          {/* New account link */}
+          <div className="mt-6 text-center text-gray-700">
+            Don’t have an account?{" "}
+            <Link
+              to="/signup"
+              className="font-semibold text-purple-600 hover:underline"
             >
-              <UserPlus size={18} /> <span>Sign Up</span>
-            </button>
-
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 px-4 py-2 border rounded-full hover:bg-gray-100"
-              onClick={() => toast.info("Google sign-in coming soon!")}
-            >
-              <div className="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
-                G
-              </div>
-              <span>Google</span>
-            </button>
+              Sign up
+            </Link>
           </div>
         </div>
       </div>

@@ -9,6 +9,9 @@ import authRoutes from "./routes/auth.js";
 import docsRoutes from "./routes/docs.js";
 import uploadRoutes from "./routes/upload.js";
 import profileRoutes from "./routes/profile.js";
+import fileUpload from "express-fileupload";
+import contactRoutes from "./routes/contactRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -40,6 +43,9 @@ app.use("/api/docs", docsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/tools", toolsRoutes);
+app.use(fileUpload());
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/contact", contactRoutes);
 
 // ✅ Root check
 app.get("/", (req, res) => res.send("✅ Backend running"));

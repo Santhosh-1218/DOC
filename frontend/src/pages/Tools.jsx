@@ -37,8 +37,7 @@ export default function Tools() {
     { slug: "image-to-pdf", name: "Image to PDF", desc: "Convert images into a PDF file", icon: Image },
     { slug: "pdf-to-image", name: "PDF to Image", desc: "Save PDF pages as images", icon: Download },
     // 🟣 Screenshot Edit tool removed here
-    { slug: "repair-pdf", name: "Repair PDF", desc: "Fix corrupted or damaged PDF files", icon: Wrench },
-    { slug: "text-extractor", name: "Text Extractor", desc: "Extract text from PDFs", icon: Upload },
+    
     { slug: "password-protect", name: "Password Protect", desc: "Add password to a PDF", icon: Lock },
     { slug: "unlock-pdf", name: "Unlock PDF", desc: "Remove PDF restrictions", icon: Unlock },
     { slug: "excel-to-pdf", name: "Excel to PDF", desc: "Convert spreadsheets into PDF", icon: FileSpreadsheet },

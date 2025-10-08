@@ -68,10 +68,13 @@ export default function Header() {
 
       {/* Right side */}
       <div className="relative flex items-center gap-6">
-        <button className="flex items-center gap-2 text-lg text-white transition hover:text-yellow-300">
-          <FaGlobe className="text-2xl" />
-          <span>App</span>
-        </button>
+         <button
+      onClick={() => navigate("/coming-soon")}
+      className="flex items-center gap-2 text-lg text-white transition hover:text-yellow-300"
+    >
+      <FaGlobe className="text-2xl" />
+      <span>App</span>
+    </button>
 
         {!isLoggedIn ? (
           <button
