@@ -50,6 +50,7 @@ export default function PdfToImage() {
     if (selectedFile) handleFileSelect(selectedFile);
   };
 
+  // ✅ Process PDF -> Image Conversion
   const processFile = async () => {
     if (!file) return;
     setIsProcessing(true);
@@ -61,32 +62,33 @@ export default function PdfToImage() {
 
       const response = await axios.post(API_BASE_URL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        responseType: "blob", // ✅ Expecting binary zip file
       });
 
-      // ✅ Backend returns { success, message, file }
-      if (response.data && response.data.file) {
-        const fullUrl = `http://localhost:5000${response.data.file}`;
-        setDownloadUrl(fullUrl);
-        setIsComplete(true);
-      } else {
-        throw new Error("Invalid server response");
-      }
+      // ✅ Create blob URL for download
+      const blob = new Blob([response.data], { type: "application/zip" });
+      const url = URL.createObjectURL(blob);
+      setDownloadUrl(url);
+      setIsComplete(true);
     } catch (err) {
-      console.error("❌ Conversion error:", err.response || err);
-      const msg =
-        err.response?.data?.message || "Failed to convert PDF. Please try again.";
-      setError(msg);
+      console.error("❌ Conversion error:", err);
+      setError("Failed to convert PDF. Please try again.");
     } finally {
       setIsProcessing(false);
     }
   };
 
+  // ✅ Download directly to local storage (not open)
   const downloadFile = () => {
-    if (downloadUrl) {
+    if (downloadUrl && file) {
       const a = document.createElement("a");
       a.href = downloadUrl;
-      a.download = file.name.replace(/\.pdf$/i, ".zip");
+      a.download = file.name.replace(/\.pdf$/i, "_images.zip");
+      a.style.display = "none";
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
     }
   };
 
@@ -95,52 +97,52 @@ export default function PdfToImage() {
     setIsProcessing(false);
     setIsComplete(false);
     setError(null);
-    if (downloadUrl) {
-      URL.revokeObjectURL(downloadUrl);
-      setDownloadUrl(null);
-    }
+    if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+    setDownloadUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF4FC] via-[#E1EDFB] to-[#CFE3FA]">
       <Header />
       <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}
-          <div className="mb-6">
+          <div className="flex justify-start mb-8">
             <button
               onClick={() => navigate("/tools")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.03]"
             >
               <ArrowLeft size={18} />
-              <span className="font-medium">Back to Tools</span>
+              <span className="text-sm font-medium sm:text-base">
+                Back to Tools
+              </span>
             </button>
           </div>
 
           {/* Header */}
-          <div className="mb-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
-              <ImageIcon className="w-8 h-8 text-blue-600" />
+          <div className="mb-10 text-center">
+            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#4FC3F7]/30 to-[#3F51B5]/20">
+              <ImageIcon className="w-10 h-10 text-[#3F51B5]" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            <h1 className="mb-3 text-3xl font-bold text-[#3F51B5] sm:text-4xl">
               PDF to Image Converter
             </h1>
-            <p className="text-lg text-gray-600">
-              Convert each page of your PDF into high-quality images.
+            <p className="text-base text-gray-700 sm:text-lg">
+              Convert every page of your PDF into high-quality images
             </p>
           </div>
 
-          {/* Tool Body */}
-          <div className="p-8 bg-white shadow-lg rounded-2xl">
+          {/* Tool Area */}
+          <div className="p-6 bg-white shadow-xl sm:p-10 rounded-2xl">
             {!file ? (
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
-                className="p-12 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-blue-400 hover:bg-blue-50"
                 onClick={() => fileInputRef.current?.click()}
+                className="p-12 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-[#3F51B5] hover:bg-[#E3F2FD]/40"
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-[#3F51B5]" />
                 <h3 className="mb-2 text-xl font-semibold text-gray-700">
                   Drop your PDF file here
                 </h3>
@@ -159,8 +161,9 @@ export default function PdfToImage() {
               </div>
             ) : (
               <div className="space-y-6">
+                {/* File Info */}
                 <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
-                  <File className="w-8 h-8 text-blue-600" />
+                  <File className="w-8 h-8 text-[#3F51B5]" />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{file.name}</h3>
                     <p className="text-sm text-gray-500">
@@ -169,12 +172,13 @@ export default function PdfToImage() {
                   </div>
                   <button
                     onClick={resetTool}
-                    className="px-3 py-1 text-sm text-gray-600 transition-colors hover:text-gray-800"
+                    className="px-3 py-1 text-sm text-gray-600 transition-all rounded-md hover:text-red-600 hover:bg-gray-100"
                   >
                     Remove
                   </button>
                 </div>
 
+                {/* Error / Success */}
                 {error && (
                   <div className="flex items-center gap-2 p-4 border border-red-200 rounded-lg bg-red-50">
                     <AlertCircle className="w-5 h-5 text-red-500" />
@@ -191,11 +195,12 @@ export default function PdfToImage() {
                   </div>
                 )}
 
-                <div className="flex justify-center gap-4">
+                {/* Buttons */}
+                <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                   {!isProcessing && !isComplete && (
                     <button
                       onClick={processFile}
-                      className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+                      className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.02]"
                     >
                       <ImageIcon className="w-5 h-5" />
                       Convert to Images
@@ -205,7 +210,7 @@ export default function PdfToImage() {
                   {isProcessing && (
                     <button
                       disabled
-                      className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-blue-400 rounded-lg cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 font-medium text-white rounded-lg bg-[#9FA8DA] cursor-not-allowed"
                     >
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Converting...
@@ -213,17 +218,17 @@ export default function PdfToImage() {
                   )}
 
                   {isComplete && (
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row">
                       <button
                         onClick={downloadFile}
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.02]"
                       >
                         <Download className="w-5 h-5" />
                         Download Images
                       </button>
                       <button
                         onClick={resetTool}
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-gray-600 rounded-lg hover:bg-gray-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-gray-400 to-gray-600 hover:opacity-90"
                       >
                         Convert Another
                       </button>

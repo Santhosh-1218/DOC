@@ -49,16 +49,18 @@ export default function Tools() {
 
       <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="mx-auto max-w-7xl">
-          {/* Back Button */}
-          <div className="mb-8">
-            <button
-              onClick={() => navigate("/home")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-[#1EC6D7]/40 rounded-full shadow hover:bg-[#EAF6FF] hover:shadow-md transition-all"
-            >
-              <ArrowLeft size={18} />
-              <span className="font-medium">Back</span>
-            </button>
-          </div>
+         {/* Back Button */}
+                             <div className="flex justify-start mb-8">
+                               <button
+                                 onClick={() => navigate("/home")}
+                                 className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.03]"
+                               >
+                                 <ArrowLeft size={18} />
+                                 <span className="text-sm font-medium sm:text-base">
+                                   Back 
+                                 </span>
+                               </button>
+                             </div>
 
           {/* Title */}
           <div className="mb-10 text-center">

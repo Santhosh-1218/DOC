@@ -1,3 +1,4 @@
+// src/pages/Feedback.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Send, MessageSquare, Star, User } from "lucide-react";
@@ -39,34 +40,36 @@ export default function Feedback() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-purple-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
       <Header />
 
-      <main className="flex-1 px-6 py-10 animate-fadeIn">
+      <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}
-          <button
-            onClick={() => navigate("/home")}
-            className="flex items-center gap-2 px-4 py-2 mb-6 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
-          >
-            <ArrowLeft size={18} />
-            <span className="font-medium">Back</span>
-          </button>
+          <div className="flex justify-start mb-8">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
+            >
+              <ArrowLeft size={18} />
+              <span className="text-sm font-medium sm:text-base">Back</span>
+            </button>
+          </div>
 
           {/* Feedback Card */}
-          <div className="p-8 border border-purple-100 shadow-xl bg-white/70 backdrop-blur-md rounded-2xl">
-            <h1 className="text-3xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600">
-              Share Your Feedback
+          <div className="p-8 border border-[#1EC6D7]/30 shadow-xl bg-white/80 backdrop-blur-md rounded-2xl">
+            <h1 className="text-3xl font-extrabold text-center text-[#4066E0] sm:text-4xl">
+              Share Your <span className="text-[#1EC6D7]">Feedback</span>
             </h1>
             <p className="max-w-lg mx-auto mt-3 text-center text-gray-600">
-              We value your opinion! Tell us how Viadoc can serve you better.
+              We value your opinion! Tell us how <span className="text-[#4066E0] font-semibold">Viadoc</span> can serve you better.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-6" autoComplete="off">
+            <form onSubmit={handleSubmit} className="mt-10 space-y-6" autoComplete="off">
               {/* Name */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <User className="w-4 h-4 text-purple-600" /> Your Name
+                  <User className="w-4 h-4 text-[#4066E0]" /> Your Name
                 </label>
                 <input
                   type="text"
@@ -75,7 +78,7 @@ export default function Feedback() {
                   onChange={handleChange}
                   required
                   placeholder="Enter your name"
-                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 />
               </div>
 
@@ -89,7 +92,7 @@ export default function Feedback() {
                   value={feedback.rating}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 >
                   <option value="">Select a rating</option>
                   <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
@@ -103,7 +106,7 @@ export default function Feedback() {
               {/* Message */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <MessageSquare className="w-4 h-4 text-purple-600" /> Feedback Message
+                  <MessageSquare className="w-4 h-4 text-[#4066E0]" /> Feedback Message
                 </label>
                 <textarea
                   name="message"
@@ -112,7 +115,7 @@ export default function Feedback() {
                   required
                   rows={5}
                   placeholder="Tell us what you think..."
-                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm resize-none focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 ></textarea>
               </div>
 
@@ -120,7 +123,7 @@ export default function Feedback() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center w-full py-3 font-semibold text-white transition-all rounded-full shadow-md bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-lg disabled:opacity-60"
+                className="flex items-center justify-center w-full py-3 font-semibold text-white transition-all rounded-full shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:scale-[1.02] hover:shadow-lg disabled:opacity-60"
               >
                 {loading ? (
                   "Submitting..."
@@ -134,7 +137,7 @@ export default function Feedback() {
               {/* Success Message */}
               {success && (
                 <p className="mt-4 text-center text-green-600">
-                  ✅ Thank you for your feedback! We appreciate your time.
+                  ✅ Thank you for your feedback! We truly appreciate your time.
                 </p>
               )}
             </form>

@@ -49,7 +49,6 @@ export default function PdfToWord() {
 
   const processFile = async () => {
     if (!file) return;
-
     setIsProcessing(true);
     setError(null);
 
@@ -79,7 +78,10 @@ export default function PdfToWord() {
       const a = document.createElement("a");
       a.href = downloadUrl;
       a.download = file.name.replace(/\.pdf$/i, ".docx");
+      a.style.display = "none";
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
     }
   };
 
@@ -92,57 +94,57 @@ export default function PdfToWord() {
       URL.revokeObjectURL(downloadUrl);
       setDownloadUrl(null);
     }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF4FC] via-[#E1EDFB] to-[#CFE3FA]">
       <Header />
 
       <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          {/* Back button */}
-          <div className="mb-6">
-            <button
-              onClick={() => navigate("/tools")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
-            >
-              <ArrowLeft size={18} />
-              <span className="font-medium">Back to Tools</span>
-            </button>
-          </div>
-
-          {/* Header */}
+         {/* Back Button */}
+                   <div className="flex justify-start mb-8">
+                     <button
+                       onClick={() => navigate("/tools")}
+                       className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.03]"
+                     >
+                       <ArrowLeft size={18} />
+                       <span className="text-sm font-medium sm:text-base">
+                         Back to Tools
+                       </span>
+                     </button>
+                   </div>
+          {/* 🧾 Header */}
           <div className="mb-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-              <File className="w-8 h-8 text-purple-600" />
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#64B5F6]/40 to-[#1E88E5]/30">
+              <File className="w-8 h-8 text-[#1E88E5]" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            <h1 className="mb-2 text-3xl font-bold text-[#0D47A1]">
               PDF to Word Converter
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-700">
               Convert your PDF documents into editable Word files
             </p>
           </div>
 
-          {/* Main Tool Area */}
-          <div className="p-8 bg-white shadow-lg rounded-2xl">
+          {/* 🧩 Main Tool Area */}
+          <div className="p-6 bg-white shadow-lg rounded-2xl sm:p-8">
             {!file ? (
+              // Step 1: Upload Area
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
-                className="p-12 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50"
+                className="p-12 text-center transition-all border-2 border-blue-200 border-dashed cursor-pointer rounded-xl hover:border-[#1E88E5] hover:bg-[#E3F2FD]/60"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-[#1E88E5]" />
                 <h3 className="mb-2 text-xl font-semibold text-gray-700">
                   Drop your PDF file here
                 </h3>
                 <p className="mb-4 text-gray-500">or click to browse files</p>
                 <div className="text-sm text-gray-400">
-                  <p>Supported formats: PDF</p>
+                  <p>Supported format: PDF</p>
                   <p>Maximum file size: 10MB</p>
                 </div>
                 <input
@@ -154,25 +156,28 @@ export default function PdfToWord() {
                 />
               </div>
             ) : (
+              // Step 2: File Display + Actions
               <div className="space-y-6">
                 {/* File Info */}
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
-                  <File className="w-8 h-8 text-purple-600" />
+                <div className="flex flex-col items-start gap-3 p-4 rounded-lg sm:flex-row sm:items-center bg-blue-50">
+                  <File className="w-8 h-8 text-[#1E88E5]" />
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{file.name}</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-semibold text-gray-900 break-words">
+                      {file.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
                   <button
                     onClick={resetTool}
-                    className="px-3 py-1 text-sm text-gray-600 transition-colors hover:text-gray-800"
+                    className="px-3 py-1 text-sm text-gray-700 transition-colors rounded-md hover:text-white hover:bg-red-500"
                   >
                     Remove
                   </button>
                 </div>
 
-                {/* Status */}
+                {/* Status Messages */}
                 {error && (
                   <div className="flex items-center gap-2 p-4 border border-red-200 rounded-lg bg-red-50">
                     <AlertCircle className="w-5 h-5 text-red-500" />
@@ -190,11 +195,11 @@ export default function PdfToWord() {
                 )}
 
                 {/* Buttons */}
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                   {!isProcessing && !isComplete && (
                     <button
                       onClick={processFile}
-                      className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-purple-600 rounded-lg hover:bg-purple-700"
+                      className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#42A5F5] to-[#1E88E5] hover:opacity-90 hover:scale-[1.02]"
                     >
                       <File className="w-5 h-5" />
                       Convert to Word
@@ -204,7 +209,7 @@ export default function PdfToWord() {
                   {isProcessing && (
                     <button
                       disabled
-                      className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-purple-400 rounded-lg cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-blue-300 rounded-lg cursor-not-allowed"
                     >
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Converting...
@@ -212,17 +217,17 @@ export default function PdfToWord() {
                   )}
 
                   {isComplete && (
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row">
                       <button
                         onClick={downloadFile}
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#43A047] to-[#2E7D32] hover:opacity-90 hover:scale-[1.02]"
                       >
                         <Download className="w-5 h-5" />
                         Download Word
                       </button>
                       <button
                         onClick={resetTool}
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors bg-gray-600 rounded-lg hover:bg-gray-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-gray-400 to-gray-600 hover:opacity-90"
                       >
                         Convert Another
                       </button>

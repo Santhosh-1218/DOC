@@ -12,6 +12,7 @@ import profileRoutes from "./routes/profile.js";
 import fileUpload from "express-fileupload";
 import contactRoutes from "./routes/contactRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
+import docAIRoutes from "./routes/docAIRoutes.js"; 
 
 dotenv.config();
 connectDB();
@@ -46,6 +47,7 @@ app.use("/api/tools", toolsRoutes);
 app.use(fileUpload());
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/docai", docAIRoutes);
 
 // ✅ Root check
 app.get("/", (req, res) => res.send("✅ Backend running"));

@@ -1,3 +1,4 @@
+// src/pages/Contact.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, User, MessageSquare, Send } from "lucide-react";
@@ -38,28 +39,29 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-purple-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
       <Header />
 
-      <main className="flex-1 px-6 py-12 animate-fadeIn">
+      <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}
-          <button
-            onClick={() => navigate("/home")}
-            className="flex items-center gap-2 px-4 py-2 mb-8 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
-          >
-            <ArrowLeft size={18} />
-            <span className="font-medium">Back</span>
-          </button>
+          <div className="flex justify-start mb-8">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
+            >
+              <ArrowLeft size={18} />
+              <span className="text-sm font-medium sm:text-base">Back</span>
+            </button>
+          </div>
 
           {/* Glass Card */}
-          <div className="p-8 border border-purple-100 shadow-xl bg-white/70 backdrop-blur-md rounded-2xl">
-            <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600">
-              Contact Viadoc
+          <div className="p-8 border border-[#1EC6D7]/30 shadow-xl bg-white/80 backdrop-blur-md rounded-2xl">
+            <h1 className="text-3xl font-extrabold text-center text-[#4066E0] sm:text-4xl">
+              Contact <span className="text-[#1EC6D7]">Viadoc</span>
             </h1>
             <p className="max-w-lg mx-auto mt-3 text-center text-gray-600">
-              Got a question, feedback, or collaboration idea?  
-              We'd love to hear from you — reach out anytime!
+              Have a question, feedback, or collaboration idea? We’d love to hear from you!
             </p>
 
             <form
@@ -68,9 +70,9 @@ export default function Contact() {
               autoComplete="off"
             >
               {/* Name */}
-              <div className="relative">
+              <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <User className="w-4 h-4 text-purple-600" /> Your Name
+                  <User className="w-4 h-4 text-[#4066E0]" /> Your Name
                 </label>
                 <input
                   type="text"
@@ -79,14 +81,14 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   placeholder="Enter your full name"
-                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 />
               </div>
 
               {/* Email */}
-              <div className="relative">
+              <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Mail className="w-4 h-4 text-purple-600" /> Email Address
+                  <Mail className="w-4 h-4 text-[#4066E0]" /> Email Address
                 </label>
                 <input
                   type="email"
@@ -95,14 +97,14 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   placeholder="Enter your email address"
-                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 />
               </div>
 
               {/* Message */}
-              <div className="relative">
+              <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <MessageSquare className="w-4 h-4 text-purple-600" /> Message
+                  <MessageSquare className="w-4 h-4 text-[#4066E0]" /> Message
                 </label>
                 <textarea
                   name="message"
@@ -111,7 +113,7 @@ export default function Contact() {
                   required
                   placeholder="Write your message here..."
                   rows={6}
-                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-[#1EC6D7]/40 rounded-lg shadow-sm resize-none focus:ring-2 focus:ring-[#4066E0] focus:border-transparent"
                 ></textarea>
               </div>
 
@@ -119,7 +121,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center w-full py-3 font-semibold text-white transition-all rounded-full shadow-md bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-lg disabled:opacity-60"
+                className="flex items-center justify-center w-full py-3 font-semibold text-white transition-all rounded-full shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:scale-[1.02] hover:shadow-lg disabled:opacity-60"
               >
                 {loading ? (
                   "Sending..."
@@ -138,8 +140,6 @@ export default function Contact() {
               )}
             </form>
           </div>
-
-          
         </div>
       </main>
 

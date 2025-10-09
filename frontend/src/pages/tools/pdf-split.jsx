@@ -11,7 +11,7 @@ import {
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import axios from "axios";
-import { PDFDocument } from "pdf-lib"; // ✅ to detect total pages
+import { PDFDocument } from "pdf-lib";
 
 export default function PdfSplit() {
   const [file, setFile] = useState(null);
@@ -23,7 +23,7 @@ export default function PdfSplit() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // when file selected
+  // 📄 Handle file selection
   const handleFileSelect = async (selectedFile) => {
     if (selectedFile.type !== "application/pdf") {
       setError("Only PDF files are allowed");
@@ -49,9 +49,9 @@ export default function PdfSplit() {
     if (e.target.files?.[0]) handleFileSelect(e.target.files[0]);
   };
 
+  // 🧠 Process PDF
   const processFile = async () => {
     if (!file) return;
-
     setIsProcessing(true);
     setError(null);
 
@@ -76,6 +76,7 @@ export default function PdfSplit() {
     }
   };
 
+  // 💾 Download
   const downloadFile = () => {
     if (downloadUrl) {
       const a = document.createElement("a");
@@ -96,41 +97,45 @@ export default function PdfSplit() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF4FC] via-[#E1EDFB] to-[#CFE3FA]">
       <Header />
       <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          {/* Back button */}
-          <div className="mb-6">
-            <button
-              onClick={() => navigate("/tools")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md"
-            >
-              <ArrowLeft size={18} />
-              <span className="font-medium">Back to Tools</span>
-            </button>
-          </div>
+          {/* Back Button */}
+                              <div className="flex justify-start mb-8">
+                                <button
+                                  onClick={() => navigate("/tools")}
+                                  className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.03]"
+                                >
+                                  <ArrowLeft size={18} />
+                                  <span className="text-sm font-medium sm:text-base">
+                                    Back to Tools
+                                  </span>
+                                </button>
+                             </div>
 
-          {/* Header */}
+          {/* 🧾 Header */}
           <div className="mb-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-              <File className="w-8 h-8 text-purple-600" />
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#64B5F6]/40 to-[#1E88E5]/30">
+              <File className="w-8 h-8 text-[#1E88E5]" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">PDF Splitter</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="mb-2 text-3xl font-bold text-[#0D47A1]">
+              PDF Splitter
+            </h1>
+            <p className="text-lg text-gray-700">
               Upload your PDF and split by selecting page range
             </p>
           </div>
 
-          {/* Main Tool */}
-          <div className="p-8 bg-white shadow-lg rounded-2xl">
+          {/* 🧩 Main Tool */}
+          <div className="p-6 bg-white shadow-lg rounded-2xl sm:p-8">
             {!file ? (
               // Step 1: Upload file
               <div
-                className="p-12 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50"
+                className="p-12 text-center transition-all border-2 border-blue-200 border-dashed cursor-pointer rounded-xl hover:border-[#1E88E5] hover:bg-[#E3F2FD]/60"
                 onClick={() => document.getElementById("pdfInput").click()}
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-[#1E88E5]" />
                 <h3 className="mb-2 text-xl font-semibold text-gray-700">
                   Drop your PDF file here
                 </h3>
@@ -145,61 +150,71 @@ export default function PdfSplit() {
               </div>
             ) : (
               // Step 2: Split options
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Left - PDF Preview */}
-                <div className="h-[600px] border rounded-lg overflow-hidden shadow">
+              <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2">
+                {/* Left - PDF Preview (Desktop only) */}
+                <div className="hidden w-full overflow-hidden border rounded-lg shadow-sm lg:block">
                   <iframe
                     src={URL.createObjectURL(file)}
                     title="PDF Preview"
-                    className="w-full h-full"
+                    className="w-full"
+                    style={{
+                      height: "75vh",
+                      border: "none",
+                    }}
                   />
                 </div>
 
-                {/* Right - Page selection */}
-                <div className="flex flex-col justify-between p-4">
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block mb-2 font-medium text-gray-700">
-                        From Page
-                      </label>
-                      <input
-                        type="number"
-                        value={fromPage}
-                        min={1}
-                        max={numPages || 1}
-                        onChange={(e) => setFromPage(Number(e.target.value))}
-                        className="w-full px-3 py-2 border rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block mb-2 font-medium text-gray-700">
-                        To Page
-                      </label>
-                      <input
-                        type="number"
-                        value={toPage}
-                        min={fromPage}
-                        max={numPages || 1}
-                        onChange={(e) => setToPage(Number(e.target.value))}
-                        className="w-full px-3 py-2 border rounded-lg"
-                      />
-                    </div>
+                {/* Right - Controls (Visible on all devices) */}
+                <div className="flex flex-col justify-between p-4 space-y-6">
+                  <div>
+                    <label className="block mb-2 font-medium text-[#1565C0]">
+                      From Page
+                    </label>
+                    <input
+                      type="number"
+                      value={fromPage}
+                      min={1}
+                      max={numPages || 1}
+                      onChange={(e) => setFromPage(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-[#42A5F5]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-medium text-[#1565C0]">
+                      To Page
+                    </label>
+                    <input
+                      type="number"
+                      value={toPage}
+                      min={fromPage}
+                      max={numPages || 1}
+                      onChange={(e) => setToPage(Number(e.target.value))}
+                      className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-[#42A5F5]"
+                    />
                   </div>
 
-                  {/* Status */}
+                  {/* PDF info for mobile */}
+                  <div className="block p-3 text-sm text-gray-600 border border-blue-100 rounded-lg lg:hidden bg-blue-50">
+                    <p>
+                      <strong>Pages detected:</strong> {numPages || "—"}
+                    </p>
+                    <p>Preview hidden on mobile for better experience.</p>
+                  </div>
+
+                  {/* Error Message */}
                   {error && (
-                    <div className="flex items-center gap-2 p-4 mt-4 border border-red-200 rounded-lg bg-red-50">
+                    <div className="flex items-center gap-2 p-4 mt-2 border border-red-200 rounded-lg bg-red-50">
                       <AlertCircle className="w-5 h-5 text-red-500" />
                       <span className="text-red-700">{error}</span>
                     </div>
                   )}
 
                   {/* Buttons */}
-                  <div className="flex justify-center gap-4 mt-6">
+                  <div className="flex flex-wrap justify-center gap-4 mt-4">
                     {!isProcessing && !downloadUrl && (
                       <button
                         onClick={processFile}
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#42A5F5] to-[#1E88E5] hover:opacity-90 hover:scale-[1.02]"
                       >
                         <File className="w-5 h-5" />
                         Split & Download
@@ -208,7 +223,7 @@ export default function PdfSplit() {
                     {isProcessing && (
                       <button
                         disabled
-                        className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-purple-400 rounded-lg cursor-not-allowed"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-blue-300 rounded-lg cursor-not-allowed"
                       >
                         <Loader2 className="w-5 h-5 animate-spin" />
                         Splitting...
@@ -218,14 +233,14 @@ export default function PdfSplit() {
                       <>
                         <button
                           onClick={downloadFile}
-                          className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                          className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#43A047] to-[#2E7D32] hover:opacity-90 hover:scale-[1.02]"
                         >
                           <Download className="w-5 h-5" />
                           Download Split PDF
                         </button>
                         <button
                           onClick={resetTool}
-                          className="flex items-center gap-2 px-6 py-3 font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                          className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-gray-400 to-gray-600 hover:opacity-90"
                         >
                           Split Another
                         </button>

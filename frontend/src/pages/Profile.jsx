@@ -321,14 +321,16 @@ export default function Profile() {
         <div className="max-w-5xl mx-auto">
           {/* Top Navigation */}
           <div className="flex items-center justify-between gap-4 mb-6">
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-[#1EC6D7]/30 rounded-full shadow-sm hover:shadow-md hover:bg-white/90"
-            >
-              <ArrowLeft size={18} className="text-[#4066E0]" />
-              <span className="font-medium">Back</span>
-            </button>
+           {/* Back Button */}
+                             <div className="flex justify-start mb-8">
+                               <button
+                                 onClick={() => navigate("/home")}
+                                 className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
+                               >
+                                 <ArrowLeft size={18} />
+                                 <span className="text-sm font-medium sm:text-base">Back</span>
+                               </button>
+                             </div>
 
             {/* Settings */}
             <div className="relative">

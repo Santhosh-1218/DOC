@@ -13,14 +13,16 @@ export default function About() {
 
       <main className="flex-1 px-6 py-10">
         <div className="max-w-5xl mx-auto">
-          {/* Back Button */}
-          <button
-            onClick={() => navigate("/home")}
-            className="flex items-center gap-2 px-4 py-2 mb-6 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
-          >
-            <ArrowLeft size={18} />
-            <span className="font-medium">Back</span>
-          </button>
+        {/* Back Button */}
+                  <div className="flex justify-start mb-8">
+                    <button
+                      onClick={() => navigate(-1)}
+                      className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
+                    >
+                      <ArrowLeft size={18} />
+                      <span className="text-sm font-medium sm:text-base">Back</span>
+                    </button>
+                  </div>
 
           {/* Main Section */}
           <div className="p-8 bg-white border border-gray-200 shadow-lg rounded-2xl">
