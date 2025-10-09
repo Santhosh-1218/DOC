@@ -34,7 +34,7 @@ const __dirname = dirname(__filename);
 // ✅ Serve the real uploads folder (one level above /src)
 const uploadsDir = path.resolve(__dirname, "../uploads");
 app.use("/uploads", express.static(uploadsDir));
-
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 console.log("🗂 Serving uploads from:", uploadsDir);
 
 // ✅ Routes

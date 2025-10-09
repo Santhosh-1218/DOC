@@ -20,6 +20,17 @@ import {
   Camera,
 } from "lucide-react";
 
+/**
+ * Profile.jsx
+ * - Colors and UI updated to match Home.jsx palette:
+ *   - Primary accent: #4066E0
+ *   - Secondary: #1EC6D7
+ *   - Purple accent: #6A3FD7
+ * - Added gradient outline around profile image
+ * - Improved mobile layout and stacking
+ * - Kept existing logic for fetching/updating/cropping/uploading
+ */
+
 export default function Profile() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -225,20 +236,20 @@ export default function Profile() {
         body: formData,
       });
 
-const data = await res.json();
-if (res.ok) {
-  const newUrl = data.profileImage
-    ? `${data.profileImage}?t=${Date.now()}`
-    : profile.profileImage;
-  setProfile((p) => ({ ...p, profileImage: newUrl }));
-  setShowCropModal(false);
+      const data = await res.json();
+      if (res.ok) {
+        const newUrl = data.profileImage
+          ? `${data.profileImage}?t=${Date.now()}`
+          : profile.profileImage;
+        setProfile((p) => ({ ...p, profileImage: newUrl }));
+        setShowCropModal(false);
 
-  URL.revokeObjectURL(imageSrc);
-  setImageSrc(null);
-  setFileForUpload(null);
-} else {
-  alert(data.message || "Upload failed");
-}
+        URL.revokeObjectURL(imageSrc);
+        setImageSrc(null);
+        setFileForUpload(null);
+      } else {
+        alert(data.message || "Upload failed");
+      }
     } catch (err) {
       console.error("Crop upload error:", err);
       alert("Upload failed");
@@ -282,33 +293,40 @@ if (res.ok) {
   // ---------- UI ----------
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
         <Header />
         <main className="flex items-center justify-center min-h-[60vh]">
-          <div>Loading profile...</div>
+          <div className="p-6 bg-white rounded-lg shadow">Loading profile...</div>
         </main>
         <Footer />
       </div>
     );
   }
 
-  // (rest of your JSX stays the same, no change needed)
-
+  // Helper: nicely formatted DOB for display
+  const displayDOB = (dob) => {
+    if (!dob) return "Not set";
+    try {
+      return new Date(dob).toLocaleDateString("en-GB");
+    } catch {
+      return dob;
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
       <Header />
 
-      <main className="flex-1 px-6 py-8">
-        <div className="max-w-6xl mx-auto">
+      <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
           {/* Top Navigation */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between gap-4 mb-6">
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
+              className="flex items-center gap-2 px-3 py-2 text-gray-700 bg-white border border-[#1EC6D7]/30 rounded-full shadow-sm hover:shadow-md hover:bg-white/90"
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={18} className="text-[#4066E0]" />
               <span className="font-medium">Back</span>
             </button>
 
@@ -317,12 +335,17 @@ if (res.ok) {
               <button
                 type="button"
                 onClick={() => setSettingsOpen(!settingsOpen)}
-                className="p-3 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
+                className="p-3 text-gray-700 transition-all bg-white border border-[#1EC6D7]/20 rounded-full shadow-sm hover:shadow-md hover:bg-white/90"
+                aria-expanded={settingsOpen}
+                aria-haspopup="true"
               >
-                <Settings size={20} />
+                <Settings size={20} className="text-[#4066E0]" />
               </button>
               {settingsOpen && (
-                <div className="absolute right-0 z-10 w-48 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <div
+                  className="absolute right-0 z-10 w-48 mt-2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg"
+                  role="menu"
+                >
                   {settingsMenuItems.map((item, i) => (
                     <button
                       type="button"
@@ -342,38 +365,46 @@ if (res.ok) {
           </div>
 
           {/* Profile Card */}
-          <div className="p-8 bg-white border border-gray-200 shadow-lg rounded-2xl">
+          <div className="p-6 bg-white border border-[#1EC6D7]/20 shadow-lg rounded-2xl">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               {/* Left Side */}
               <div className="space-y-6">
                 {/* Profile Picture */}
                 <div className="flex flex-col items-center">
                   <div className="relative">
-                    <div className="flex items-center justify-center w-32 h-32 overflow-hidden bg-gray-100 border-4 border-gray-200 rounded-full">
-                      {profile.profileImage ? (
-                        <img
-                          src={profile.profileImage}
-                          alt="Profile"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            objectPosition: "center",
-                          }}
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = "/default-avatar.png";
-                          }}
-                        />
-                      ) : (
-                        <User size={40} className="text-gray-500" />
-                      )}
+                    {/* Gradient ring wrapper */}
+                    <div className="p-1 rounded-full bg-gradient-to-r from-[#4066E0] via-[#1EC6D7] to-[#6A3FD7] animate-gradient-rotate">
+                      <div className="p-1 bg-white rounded-full">
+                        <div className="relative overflow-hidden bg-gray-100 border border-white rounded-full shadow-xl w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36">
+                          {profile.profileImage ? (
+                            <img
+                              src={profile.profileImage}
+                              alt="Profile"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = "/default-avatar.png";
+                              }}
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center w-full h-full">
+                              <User size={44} className="text-gray-400" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 p-2 text-white transition-colors bg-purple-600 rounded-full shadow-lg hover:bg-purple-700"
+                      className="absolute -bottom-1 -right-1 p-2 text-white transition-colors bg-[#4066E0] rounded-full shadow-lg hover:bg-[#1EC6D7]"
+                      aria-label="Change profile image"
                     >
                       <Camera size={16} />
                     </button>
@@ -386,11 +417,16 @@ if (res.ok) {
                       className="hidden"
                     />
                   </div>
-                </div>
 
-                {/* Username */}
-                <div className="text-xl font-semibold text-center text-gray-800">
-                  {profile.username || "username"}
+                  {/* small caption and plan chip */}
+                  <div className="flex items-center gap-2 mt-3">
+                    <div className="text-center">
+                      <div className="text-lg font-semibold text-gray-800">
+                        {profile.username || "username"}
+                      </div>
+                      <div className="text-xs text-gray-500">{profile.email}</div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Full Name */}
@@ -399,7 +435,7 @@ if (res.ok) {
                     Full Name
                   </label>
                   {isEditing.fullName ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       <input
                         type="text"
                         value={editValues.fullName}
@@ -409,23 +445,26 @@ if (res.ok) {
                             fullName: e.target.value,
                           }))
                         }
-                        className="flex-1 px-3 py-2 border rounded-lg"
+                        className="flex-1 px-3 py-2 border rounded-lg focus:border-[#4066E0] focus:ring focus:ring-[#4066E0]/20"
+                        placeholder="Your full name"
                       />
-                      <button
-                        type="button"
-                        onClick={() => handleSave("fullName")}
-                        disabled={saving}
-                        className="p-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
-                      >
-                        <Check size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleCancel("fullName")}
-                        className="p-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700"
-                      >
-                        <X size={16} />
-                      </button>
+                      <div className="flex flex-shrink-0 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSave("fullName")}
+                          disabled={saving}
+                          className="inline-flex items-center px-3 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCancel("fullName")}
+                          className="inline-flex items-center px-3 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
@@ -435,7 +474,8 @@ if (res.ok) {
                         onClick={() =>
                           setIsEditing((prev) => ({ ...prev, fullName: true }))
                         }
-                        className="text-purple-600"
+                        className="text-[#4066E0]"
+                        aria-label="Edit full name"
                       >
                         <Edit3 size={16} />
                       </button>
@@ -443,14 +483,14 @@ if (res.ok) {
                   )}
                 </div>
 
-                {/* Email */}
+                {/* Email (read-only) */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Email
                   </label>
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50">
                     <Mail size={16} className="text-gray-500" />
-                    <span>{profile.email}</span>
+                    <span className="truncate">{profile.email}</span>
                   </div>
                 </div>
 
@@ -460,7 +500,7 @@ if (res.ok) {
                     Date of Birth
                   </label>
                   {isEditing.dateOfBirth ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       <input
                         type="date"
                         value={editValues.dateOfBirth}
@@ -470,37 +510,36 @@ if (res.ok) {
                             dateOfBirth: e.target.value,
                           }))
                         }
-                        className="flex-1 px-3 py-2 border rounded-lg"
+                        className="flex-1 px-3 py-2 border rounded-lg focus:border-[#4066E0] focus:ring focus:ring-[#4066E0]/20"
                       />
-                      <button
-                        type="button"
-                        onClick={() => handleSave("dateOfBirth")}
-                        disabled={saving}
-                        className="p-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
-                      >
-                        <Check size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleCancel("dateOfBirth")}
-                        className="p-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700"
-                      >
-                        <X size={16} />
-                      </button>
+                      <div className="flex flex-shrink-0 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSave("dateOfBirth")}
+                          disabled={saving}
+                          className="inline-flex items-center px-3 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCancel("dateOfBirth")}
+                          className="inline-flex items-center px-3 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
-                      <span>
-                        {profile.dateOfBirth
-                          ? new Date(profile.dateOfBirth).toLocaleDateString("en-GB")
-                          : "Not set"}
-                      </span>
+                      <span>{displayDOB(profile.dateOfBirth)}</span>
                       <button
                         type="button"
                         onClick={() =>
                           setIsEditing((prev) => ({ ...prev, dateOfBirth: true }))
                         }
-                        className="text-purple-600"
+                        className="text-[#4066E0]"
+                        aria-label="Edit date of birth"
                       >
                         <Edit3 size={16} />
                       </button>
@@ -508,15 +547,14 @@ if (res.ok) {
                   )}
                 </div>
               </div>
-
-              {/* Right Side - Premium */}
-              <div className="p-6 border border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
-                <div className="p-4 mb-6 bg-white border rounded-lg">
+{/* Right Section - Plan */}
+              <div className="p-6 border border-[#1EC6D7]/40 bg-gradient-to-br from-[#EAF6FF] to-[#F3F8FF] rounded-xl">
+                <div className="p-4 mb-6 bg-white border border-[#1EC6D7]/30 rounded-lg">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {profile.plan === "premium" ? "Premium" : "Starter"}
                     </h3>
-                    <Star size={18} className="text-yellow-500" />
+                    <Star size={18} className="text-yellow-400 fill-yellow-400" />
                   </div>
                   <p className="text-sm text-gray-600">
                     {profile.plan === "premium"
@@ -531,27 +569,23 @@ if (res.ok) {
                       Upgrade to Pro
                     </h4>
                     <div className="mb-6 space-y-2 text-sm text-gray-700">
-                      {[
-                        "Unlimited Access",
-                        "AI Tools",
-                        "Exclusive Features",
-                        "Faster Processing",
-                      ].map((f, i) => (
-                        <div key={i} className="flex items-center justify-center gap-2">
-                          <Check size={14} className="text-green-600" />
-                          <span>{f}</span>
-                        </div>
-                      ))}
+                      {["Unlimited Access", "AI Tools", "Exclusive Features", "Faster Processing"].map(
+                        (f, i) => (
+                          <div key={i} className="flex items-center justify-center gap-2">
+                            <Check size={14} className="text-green-600" />
+                            <span>{f}</span>
+                          </div>
+                        )
+                      )}
                     </div>
                     <div className="mb-4">
-                      <div className="flex items-center justify-center w-20 h-20 mx-auto rounded-full shadow-lg bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500">
+                      <div className="flex items-center justify-center w-20 h-20 mx-auto rounded-full shadow-lg bg-gradient-to-br from-[#4066E0] via-[#1EC6D7] to-[#6A3FD7]">
                         <Crown size={32} className="text-white" />
                       </div>
                     </div>
                     <button
-                      type="button"
-                      onClick={() => navigate("/premium")}
-                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-white transition-all rounded-full shadow-lg bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600"
+                      onClick={() => navigate("/coming-soon")}
+                      className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-white rounded-full shadow-lg bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:from-[#1EC6D7] hover:to-[#4066E0]"
                     >
                       <Sparkles size={18} />
                       <span>Unlock Premium</span>
@@ -561,7 +595,7 @@ if (res.ok) {
               </div>
             </div>
           </div>
-        </div>
+          </div>
       </main>
 
       <Footer />
@@ -589,7 +623,7 @@ if (res.ok) {
                   type="button"
                   onClick={handleSaveCrop}
                   disabled={saving}
-                  className="px-3 py-1 text-sm text-white bg-blue-600 rounded"
+                  className="px-3 py-1 text-sm text-white bg-[#4066E0] rounded hover:bg-[#1EC6D7]"
                 >
                   {saving ? "Saving..." : "Save & Upload"}
                 </button>
@@ -605,10 +639,11 @@ if (res.ok) {
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
+                objectFit="horizontal-cover"
               />
             </div>
 
-            <div className="flex items-center justify-between gap-4 mt-3">
+            <div className="flex flex-col items-center justify-between gap-4 mt-3 sm:flex-row">
               <div className="flex items-center gap-2">
                 <label className="text-sm">Zoom</label>
                 <input

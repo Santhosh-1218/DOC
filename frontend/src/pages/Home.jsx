@@ -17,9 +17,9 @@ import {
   Sparkles,
   Bot,
 } from "lucide-react";
-import { jsPDF } from "jspdf"; // ✅ Added for PDF share
+import { jsPDF } from "jspdf";
 
-/// Animated text with typing + erasing effect (handles multiline + stable height)
+// Animated typing text
 const texts = [
   "Use Pro Doc\nto create your\nproject docs faster and smarter",
   "Use Pro Doc\nto create your\nprofessional documents easily",
@@ -32,13 +32,11 @@ const AnimatedText = () => {
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [speed, setSpeed] = useState(80);
-
   const longestText = texts.reduce((a, b) => (a.length > b.length ? a : b));
 
   useEffect(() => {
     const handleTyping = () => {
       const fullText = texts[currentText];
-
       if (isDeleting) {
         setDisplayedText((prev) => prev.slice(0, -1));
         setSpeed(40);
@@ -65,7 +63,7 @@ const AnimatedText = () => {
         {longestText}
       </h2>
       <h2 className="absolute top-0 left-0 text-2xl font-extrabold leading-snug text-gray-900 whitespace-pre-line lg:text-3xl">
-        <span className="text-purple-700">{displayedText}</span>
+        <span className="text-[#4066E0]">{displayedText}</span>
         <span className="animate-pulse">|</span>
       </h2>
     </div>
@@ -75,14 +73,13 @@ const AnimatedText = () => {
 export default function Home() {
   const [docs, setDocs] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null); // ✅ For modal
-  const [deleteInput, setDeleteInput] = useState(""); // ✅ For modal input
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteInput, setDeleteInput] = useState("");
   const timeoutRef = useRef(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
 
-  // Fetch docs only if logged in
   const fetchDocs = useCallback(async () => {
     if (!isLoggedIn) return;
     try {
@@ -99,7 +96,6 @@ export default function Home() {
     fetchDocs();
   }, [fetchDocs]);
 
-  // Delete doc with confirmation modal
   const confirmDelete = async () => {
     if (!deleteTarget || deleteInput !== deleteTarget.name) return;
     try {
@@ -114,7 +110,6 @@ export default function Home() {
     }
   };
 
-  // Favorite toggle
   const setFavorite = async (id) => {
     try {
       const res = await axios.patch(
@@ -132,53 +127,45 @@ export default function Home() {
     }
   };
 
-  // Share doc as PDF
-  // Share doc as PDF
-const shareDocAsPDF = async (doc) => {
-  try {
-    const res = await axios.get(`http://localhost:5000/api/docs/my-docs/${doc._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const fullDoc = res.data;
-
-    const pdf = new jsPDF("p", "pt", "a4");
-
-    // Add title
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(18);
-    pdf.text(fullDoc.name, 40, 50);
-
-    // Render content exactly as styled in your editor
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    await pdf.html(fullDoc.content || "<p></p>", {
-      x: 40,
-      y: 80,
-      width: 500,
-      windowWidth: 800, // ✅ ensures correct line wrapping
-    });
-
-    const pdfBlob = pdf.output("blob");
-    const pdfFile = new File([pdfBlob], `${fullDoc.name}.pdf`, {
-      type: "application/pdf",
-    });
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-      await navigator.share({
-        title: fullDoc.name,
-        text: "Sharing my Pro Doc document",
-        files: [pdfFile],
+  const shareDocAsPDF = async (doc) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/docs/my-docs/${doc._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-    } else {
-      pdf.save(`${fullDoc.name}.pdf`);
-      alert("Sharing not supported — PDF downloaded instead");
-    }
-  } catch (err) {
-    console.error("Error sharing doc:", err);
-    alert("Failed to share document");
-  }
-};
+      const fullDoc = res.data;
+      const pdf = new jsPDF("p", "pt", "a4");
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(18);
+      pdf.text(fullDoc.name, 40, 50);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      await pdf.html(fullDoc.content || "<p></p>", {
+        x: 40,
+        y: 80,
+        width: 500,
+        windowWidth: 800,
+      });
 
+      const pdfBlob = pdf.output("blob");
+      const pdfFile = new File([pdfBlob], `${fullDoc.name}.pdf`, {
+        type: "application/pdf",
+      });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          title: fullDoc.name,
+          text: "Sharing my Pro Doc document",
+          files: [pdfFile],
+        });
+      } else {
+        pdf.save(`${fullDoc.name}.pdf`);
+        alert("Sharing not supported — PDF downloaded instead");
+      }
+    } catch (err) {
+      console.error("Error sharing doc:", err);
+      alert("Failed to share document");
+    }
+  };
 
   const toggleDropdown = (id) => {
     clearTimeout(timeoutRef.current);
@@ -189,25 +176,20 @@ const shareDocAsPDF = async (doc) => {
     timeoutRef.current = setTimeout(() => setDropdownOpen(null), 300);
   };
 
-  // Button navigation logic
   const handleNav = (path) => {
-    if (isLoggedIn) {
-      navigate(path);
-    } else {
-      navigate("/login");
-    }
+    if (isLoggedIn) navigate(path);
+    else navigate("/login");
   };
 
-
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
-          <div className="p-8 mb-10 text-center bg-white border border-gray-200 shadow-lg rounded-2xl">
+          <div className="p-8 mb-10 text-center bg-white border border-[#1EC6D7]/30 shadow-lg rounded-2xl">
             <h2 className="text-3xl font-extrabold text-gray-900">
-              Welcome to <span className="text-purple-600">Pro Doc</span>
+              Welcome to <span className="text-[#4066E0]">Pro Doc</span>
             </h2>
             <p className="mt-3 text-lg text-gray-600">
               Create professional documents, collaborate with your team, and
@@ -218,13 +200,13 @@ const shareDocAsPDF = async (doc) => {
               <div className="flex justify-center gap-6 mt-8">
                 <button
                   onClick={() => navigate("/login")}
-                  className="px-6 py-2 text-white transition-all bg-purple-600 rounded-full shadow-md hover:shadow-lg hover:bg-purple-700"
+                  className="px-6 py-2 text-white transition-all rounded-full shadow-md bg-[#4066E0] hover:bg-[#1EC6D7] hover:shadow-lg"
                 >
                   Get Started - Login
                 </button>
                 <button
                   onClick={() => navigate("/signup")}
-                  className="px-6 py-2 text-purple-600 transition-all border border-purple-600 rounded-full shadow-sm hover:bg-purple-50 hover:shadow-md"
+                  className="px-6 py-2 text-[#4066E0] transition-all border border-[#1EC6D7] rounded-full shadow-sm hover:bg-[#1EC6D7]/10 hover:text-[#1EC6D7] hover:shadow-md"
                 >
                   Create Account
                 </button>
@@ -234,166 +216,262 @@ const shareDocAsPDF = async (doc) => {
 
           {/* Top Section */}
           <div className="grid grid-cols-1 gap-6 mb-12 lg:grid-cols-2">
-            {/* Left box */}
-            <div className="flex gap-4 p-6 bg-white border border-gray-200 shadow-md rounded-2xl">
-              {/* Create Doc (Big Box) */}
+            {/* Left Boxes */}
+            <div className="flex gap-4 p-6 bg-white border border-[#1EC6D7]/30 shadow-md rounded-2xl">
               <div
                 onClick={() => handleNav("/create-doc")}
-                className="flex flex-col items-center justify-center flex-1 p-8 transition-all duration-300 border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50 hover:shadow-xl group"
+                className="flex flex-col items-center justify-center flex-1 p-8 transition-all duration-300 border-2 border-dashed cursor-pointer rounded-xl border-[#1EC6D7]/40 hover:border-[#4066E0] hover:bg-[#EAF6FF] hover:shadow-xl group"
               >
-                <div className="flex items-center justify-center w-20 h-20 mb-4 transition-colors bg-gray-100 rounded-full group-hover:bg-purple-100">
-                  <Plus strokeWidth={3} className="w-10 h-10 text-black group-hover:text-purple-700" />
+                <div className="flex items-center justify-center w-20 h-20 mb-4 transition-colors rounded-full bg-[#EAF6FF] group-hover:bg-[#1EC6D7]/20">
+                  <Plus strokeWidth={3} className="w-10 h-10 text-[#4066E0]" />
                 </div>
-                <p className="text-lg font-semibold text-gray-900 group-hover:text-purple-700">
+                <p className="text-lg font-semibold text-gray-900 group-hover:text-[#4066E0]">
                   Create a Doc
                 </p>
               </div>
 
-              {/* Right Side (Two Small Boxes) */}
               <div className="flex flex-col w-1/2 gap-4">
-                {/* Favorites */}
                 <div
                   onClick={() => handleNav("/favorites")}
-                  className="flex flex-col items-center justify-center flex-1 p-4 transition-all duration-300 border border-gray-200 cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50 hover:shadow-lg group"
+                  className="flex flex-col items-center justify-center flex-1 p-4 transition-all duration-300 border cursor-pointer rounded-xl border-[#1EC6D7]/30 hover:border-[#4066E0] hover:bg-[#EAF6FF] hover:shadow-lg group"
                 >
-                  <Bookmark strokeWidth={3} className="mb-2 text-black w-7 h-7 group-hover:text-purple-700" />
-                  <p className="text-sm font-semibold text-gray-900 group-hover:text-purple-700">
+                  <Bookmark strokeWidth={3} className="mb-2 w-7 h-7 text-[#4066E0]" />
+                  <p className="text-sm font-semibold text-gray-900 group-hover:text-[#4066E0]">
                     Favorites
                   </p>
                 </div>
 
-                {/* Tools */}
                 <div
                   onClick={() => handleNav("/tools")}
-                  className="flex flex-col items-center justify-center flex-1 p-4 transition-all duration-300 border border-gray-200 cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50 hover:shadow-lg group"
+                  className="flex flex-col items-center justify-center flex-1 p-4 transition-all duration-300 border cursor-pointer rounded-xl border-[#1EC6D7]/30 hover:border-[#4066E0] hover:bg-[#EAF6FF] hover:shadow-lg group"
                 >
-                  <Settings strokeWidth={3} className="mb-2 text-black w-7 h-7 group-hover:text-purple-700" />
-                  <p className="text-sm font-semibold text-black group-hover:text-purple-700">
+                  <Settings strokeWidth={3} className="mb-2 w-7 h-7 text-[#4066E0]" />
+                  <p className="text-sm font-semibold text-gray-900 group-hover:text-[#4066E0]">
                     Tools
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Right promo card (AI section with Docxy top-right) */}
-            <div className="relative p-8 overflow-hidden border border-purple-200 shadow-lg bg-gradient-to-br from-purple-100 via-pink-50 to-purple-200 rounded-2xl min-h-[240px] flex flex-col justify-between">
-              {/* Docxy bot top-right */}
-              <div className="absolute flex flex-col items-center top-4 right-4">
-                <Bot className="w-12 h-12 text-purple-700 drop-shadow" />
+            {/* AI Section with DocAI Background */}
+            <div
+              className="relative p-8 overflow-hidden border shadow-lg bg-gradient-to-br from-[#4066E0]/10 via-[#1EC6D7]/5 to-[#EAF6FF] border-[#1EC6D7]/30 rounded-2xl min-h-[240px] flex flex-col justify-between group cursor-pointer hover:shadow-2xl transition-all"
+              onClick={() => handleNav("/DocAI")}
+            >
+              {/* Animated Background Elements */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {/* Floating Orbs */}
+                <div className="absolute w-32 h-32 rounded-full bg-[#4066E0]/10 blur-2xl animate-float top-10 left-10"></div>
+                <div className="absolute w-40 h-40 rounded-full bg-[#1EC6D7]/10 blur-3xl animate-float-delayed bottom-10 right-10"></div>
+                <div className="absolute w-24 h-24 rounded-full bg-[#6A3FD7]/10 blur-xl animate-float-slow top-20 right-20"></div>
+
+                {/* Moving Triangles */}
+                <div className="absolute w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[60px] border-b-[#4066E0]/5 animate-triangle-float top-5 left-1/4"></div>
+                <div className="absolute w-0 h-0 border-l-[30px] border-l-transparent border-r-[30px] border-r-transparent border-b-[45px] border-b-[#1EC6D7]/8 animate-triangle-rotate bottom-16 left-1/3"></div>
+                <div className="absolute w-0 h-0 border-l-[25px] border-l-transparent border-r-[25px] border-r-transparent border-b-[38px] border-b-[#6A3FD7]/6 animate-triangle-float-slow top-1/2 right-1/4"></div>
+
+                {/* Geometric Lines */}
+                <div className="absolute w-16 h-1 bg-gradient-to-r from-transparent via-[#4066E0]/20 to-transparent animate-line-move top-1/3 left-0"></div>
+                <div className="absolute w-20 h-1 bg-gradient-to-r from-transparent via-[#1EC6D7]/15 to-transparent animate-line-move-reverse bottom-1/4 right-0"></div>
+              </div>
+
+              <div className="absolute z-20 flex flex-col items-center top-4 right-4">
+                <Bot className="w-12 h-12 text-[#4066E0] drop-shadow-lg animate-bounce-slow group-hover:text-[#1EC6D7] transition-colors" />
                 <span className="mt-1 text-sm font-bold text-gray-800">
                   Docxy
                 </span>
               </div>
 
-              {/* Animated Text + Button */}
               <div className="relative z-10 max-w-md">
                 <AnimatedText />
                 <button
-                  onClick={() => handleNav("/DocAI")}
-                  className="inline-flex items-center gap-2 px-6 py-3 mt-6 font-medium text-gray-800 transition-all bg-white rounded-full shadow-md hover:shadow-xl hover:bg-gray-50 group"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNav("/DocAI");
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 mt-6 font-medium text-gray-800 transition-all bg-white/80 backdrop-blur-sm border border-[#1EC6D7]/30 rounded-full shadow-md hover:bg-[#1EC6D7]/10 hover:border-[#4066E0] hover:text-[#4066E0] hover:shadow-xl group"
                 >
-                  <Sparkles className="w-5 h-5 group-hover:text-purple-600" />
+                  <Sparkles className="w-5 h-5 text-[#4066E0] group-hover:text-[#1EC6D7] animate-pulse" />
                   <span>Make me a Project Documentation ...</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Docs List (only if logged in) */}
+          {/* Document List - Responsive Table */}
           {isLoggedIn && (
-            <div className="mt-6 border-t-2 border-gray-300">
-              {/* Header */}
-              <div className="grid grid-cols-[80px,1fr,180px,100px] font-semibold bg-gray-100 text-gray-700 py-3 px-2 rounded-t-lg">
-                <span className="text-center">S. No</span>
-                <span>Name</span>
-                <span className="pr-6 text-right">Date Created</span>
-                <span className="text-right">Actions</span>
+            <div className="mt-6 border-t-2 border-[#1EC6D7]/30">
+              {/* Desktop Header */}
+              <div className="hidden sm:grid grid-cols-[60px,1fr,140px,80px] md:grid-cols-[80px,1fr,180px,100px] font-semibold bg-[#EAF6FF] text-gray-700 py-3 px-2 sm:px-4 rounded-t-lg">
+                <span className="text-xs text-center md:text-sm">S. No</span>
+                <span className="text-xs md:text-sm">Name</span>
+                <span className="pr-2 text-xs text-right md:text-sm">Date Created</span>
+                <span className="text-xs text-right md:text-sm">Actions</span>
               </div>
 
-              {/* Body */}
+              {/* Mobile Header */}
+              <div className="grid grid-cols-[1fr,80px] sm:hidden font-semibold bg-[#EAF6FF] text-gray-700 py-3 px-3 rounded-t-lg">
+                <span className="text-sm">Document</span>
+                <span className="text-sm text-right">Actions</span>
+              </div>
+
               <div className="bg-white rounded-b-lg shadow-sm">
                 {docs.length === 0 ? (
-                  <div className="px-2 py-4 text-sm text-gray-500 border-b">
+                  <div className="px-3 py-4 text-sm text-gray-500 border-b">
                     No documents yet.
                   </div>
                 ) : (
                   docs.map((doc, i) => (
-                    <div
-                      key={doc._id}
-                      className="grid grid-cols-[80px,1fr,180px,100px] items-center py-3 px-2 border-b text-sm hover:bg-purple-50 transition-all"
-                    >
-                      <span className="text-center">{i + 1}</span>
-                      <span
-                        className="flex items-center gap-1 font-medium text-gray-800 cursor-pointer hover:text-purple-600"
-                        onClick={() => navigate(`/doc/${doc._id}`)}
-                      >
-                        {doc.name}
-                        {doc.favorite && (
-                          <Star size={14} className="text-yellow-400 fill-yellow-400" />
-                        )}
-                      </span>
-                      <span className="pr-6 text-right text-gray-600">
-                        {doc.createdAt
-                          ? new Date(doc.createdAt).toLocaleDateString()
-                          : "-"}
-                      </span>
-                      <span className="relative flex justify-end">
-                        <button
-                          className="p-1 rounded hover:bg-gray-100"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleDropdown(doc._id);
-                          }}
+                    <div key={doc._id}>
+                      {/* Desktop Row */}
+                      <div className="hidden sm:grid grid-cols-[60px,1fr,140px,80px] md:grid-cols-[80px,1fr,180px,100px] items-center py-3 px-2 sm:px-4 border-b text-sm hover:bg-[#EAF6FF] transition-all">
+                        <span className="text-xs text-center md:text-sm">{i + 1}</span>
+                        <span
+                          className="flex items-center gap-1 font-medium text-gray-800 cursor-pointer hover:text-[#4066E0] truncate pr-2 text-xs md:text-sm"
+                          onClick={() => navigate(`/doc/${doc._id}`)}
+                          title={doc.name}
                         >
-                          <MoreVertical size={16} className="text-gray-600" />
-                        </button>
-
-                        {dropdownOpen === doc._id && (
-                          <div
-                            className="absolute right-0 z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-36 animate-fadeIn"
-                            onMouseLeave={handleMouseLeave}
+                          <span className="truncate">{doc.name}</span>
+                          {doc.favorite && <Star size={14} className="flex-shrink-0 text-yellow-400 fill-yellow-400" />}
+                        </span>
+                        <span className="pr-2 text-xs text-right text-gray-600 md:text-sm">
+                          {doc.createdAt
+                            ? new Date(doc.createdAt).toLocaleDateString()
+                            : "-"}
+                        </span>
+                        <span className="relative flex justify-end">
+                          <button
+                            className="p-1 rounded hover:bg-[#EAF6FF]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDropdown(doc._id);
+                            }}
                           >
-                            <button
-                              className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
-                              onClick={() => navigate(`/doc/${doc._id}`)}
+                            <MoreVertical size={16} className="text-gray-600" />
+                          </button>
+
+                          {dropdownOpen === doc._id && (
+                            <div
+                              className="absolute right-0 z-10 mt-2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg w-36 animate-fadeIn"
+                              onMouseLeave={handleMouseLeave}
                             >
-                              <Eye size={14} /> View
-                            </button>
-                            <button
-                              className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
-                              onClick={() => navigate(`/doc/${doc._id}/edit`)}
-                            >
-                              <Edit size={14} /> Edit
-                            </button>
-                            <button
-                              className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
-                              onClick={() => setFavorite(doc._id)}
-                            >
-                              <Star
-                                size={14}
-                                className={
-                                  doc.favorite
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-gray-500"
-                                }
-                              />{" "}
-                              Favorite
-                            </button>
-                            <button
-                              className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
-                              onClick={() => shareDocAsPDF(doc)}
-                            >
-                              <Share2 size={14} /> Share
-                            </button>
-                            <button
-                              className="flex items-center w-full gap-2 px-3 py-2 text-red-600 hover:bg-red-50"
-                              onClick={() => setDeleteTarget(doc)}
-                            >
-                              <Trash2 size={14} /> Delete
-                            </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => navigate(`/doc/${doc._id}`)}
+                              >
+                                <Eye size={14} /> View
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => navigate(`/doc/${doc._id}/edit`)}
+                              >
+                                <Edit size={14} /> Edit
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => setFavorite(doc._id)}
+                              >
+                                <Star
+                                  size={14}
+                                  className={
+                                    doc.favorite
+                                      ? "text-yellow-400 fill-yellow-400"
+                                      : "text-gray-500"
+                                  }
+                                />{" "}
+                                Favorite
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => shareDocAsPDF(doc)}
+                              >
+                                <Share2 size={14} /> Share
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                                onClick={() => setDeleteTarget(doc)}
+                              >
+                                <Trash2 size={14} /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </span>
+                      </div>
+
+                      {/* Mobile Row */}
+                      <div className="grid grid-cols-[1fr,80px] sm:hidden items-start py-3 px-3 border-b hover:bg-[#EAF6FF] transition-all gap-2">
+                        <div
+                          className="flex flex-col gap-1 cursor-pointer"
+                          onClick={() => navigate(`/doc/${doc._id}`)}
+                        >
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium text-gray-800 hover:text-[#4066E0] text-sm truncate max-w-[200px]" title={doc.name}>
+                              {doc.name}
+                            </span>
+                            {doc.favorite && <Star size={12} className="flex-shrink-0 text-yellow-400 fill-yellow-400" />}
                           </div>
-                        )}
-                      </span>
+                          <span className="text-xs text-gray-500">
+                            {doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : "No date"}
+                          </span>
+                        </div>
+                        <span className="relative flex items-start justify-end">
+                          <button
+                            className="p-1.5 rounded hover:bg-[#EAF6FF]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDropdown(doc._id);
+                            }}
+                          >
+                            <MoreVertical size={18} className="text-gray-600" />
+                          </button>
+
+                          {dropdownOpen === doc._id && (
+                            <div
+                              className="absolute right-0 z-10 mt-2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg w-36 animate-fadeIn"
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => navigate(`/doc/${doc._id}`)}
+                              >
+                                <Eye size={14} /> View
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => navigate(`/doc/${doc._id}/edit`)}
+                              >
+                                <Edit size={14} /> Edit
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => setFavorite(doc._id)}
+                              >
+                                <Star
+                                  size={14}
+                                  className={
+                                    doc.favorite
+                                      ? "text-yellow-400 fill-yellow-400"
+                                      : "text-gray-500"
+                                  }
+                                />{" "}
+                                Favorite
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
+                                onClick={() => shareDocAsPDF(doc)}
+                              >
+                                <Share2 size={14} /> Share
+                              </button>
+                              <button
+                                className="flex items-center w-full gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                                onClick={() => setDeleteTarget(doc)}
+                              >
+                                <Trash2 size={14} /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </span>
+                      </div>
                     </div>
                   ))
                 )}
@@ -402,6 +480,7 @@ const shareDocAsPDF = async (doc) => {
           )}
         </div>
       </main>
+
       <Footer />
 
       {/* Delete Modal */}
@@ -411,14 +490,12 @@ const shareDocAsPDF = async (doc) => {
             <h2 className="mb-4 text-xl font-bold">
               Confirm deletion of <span className="text-red-600">{deleteTarget.name}</span>
             </h2>
-            <p className="mb-3 text-gray-600">
-              Please type the document name to confirm:
-            </p>
+            <p className="mb-3 text-gray-600">Please type the document name to confirm:</p>
             <input
               type="text"
               value={deleteInput}
               onChange={(e) => setDeleteInput(e.target.value)}
-              className="w-full px-3 py-2 mb-4 border rounded"
+              className="w-full px-3 py-2 mb-4 border rounded border-[#1EC6D7]/40"
               placeholder={deleteTarget.name}
             />
             <div className="flex justify-center gap-4">

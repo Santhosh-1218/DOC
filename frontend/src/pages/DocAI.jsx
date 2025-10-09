@@ -29,7 +29,7 @@ export default function DocAI() {
             <div className="flex items-center justify-center mb-4 bg-purple-100 rounded-full w-14 h-14">
               <Cpu className="w-8 h-8 text-purple-600" />
             </div>
-            <h1 className="text-2xl font-extrabold text-gray-900">DocAI — Coming Soon</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900">Docxy — Coming Soon</h1>
             <p className="max-w-md mt-2 text-sm text-center text-gray-600">
               Smart writing and document assistance powered by AI — we're polishing the experience.
             </p>

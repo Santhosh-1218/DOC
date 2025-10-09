@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import {
-  MoreVertical,
   Star,
   Eye,
   Edit,
@@ -42,7 +41,7 @@ export default function Favorites() {
     fetchDocs();
   }, [fetchDocs]);
 
-  // Delete doc (API call)
+  // Delete doc
   const deleteDoc = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/docs/my-docs/${id}`, {
@@ -54,7 +53,7 @@ export default function Favorites() {
     }
   };
 
-  // Share doc as PDF (Windows-friendly)
+  // Share doc as PDF
   const shareDocAsPDF = async (doc) => {
     try {
       const res = await axios.get(`http://localhost:5000/api/docs/my-docs/${doc._id}`, {
@@ -81,7 +80,6 @@ export default function Favorites() {
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
         await navigator.share({ title: fullDoc.name, text: "Sharing doc", files: [pdfFile] });
       } else {
-        // Fallback: download (works reliably on Windows)
         pdf.save(`${fullDoc.name}.pdf`);
         alert("Sharing not supported — PDF downloaded instead");
       }
@@ -91,21 +89,20 @@ export default function Favorites() {
     }
   };
 
-  // Right click handler
   const handleContextMenu = (e, id) => {
     e.preventDefault();
     setDropdownOpen((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF6FF] via-[#F3F8FF] to-[#E4E1FF]">
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto">
           {/* Back Button */}
           <button
             onClick={() => navigate("/home")}
-            className="flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-gray-700 bg-white border rounded-full shadow hover:bg-gray-100 hover:shadow-md"
+            className="flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-gray-700 bg-white border border-[#1EC6D7]/40 rounded-full shadow hover:bg-[#EAF6FF] hover:shadow-md transition-all"
           >
             <ArrowLeft size={16} />
             Back
@@ -113,12 +110,12 @@ export default function Favorites() {
 
           {/* Title */}
           <h2 className="mb-8 text-2xl font-extrabold text-center text-gray-900">
-            All Your Favorite Docs
+            Your <span className="text-[#4066E0]">Favorite Docs</span>
           </h2>
 
           {/* Docs Grid */}
           {isLoggedIn ? (
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-3 md:grid-cols-4 sm:gap-6">
               {docs.length === 0 ? (
                 <div className="text-center text-gray-500 col-span-full">
                   No favorites yet.
@@ -126,11 +123,13 @@ export default function Favorites() {
               ) : (
                 docs.map((doc) => (
                   <div
-                      key={doc._id}
-                      className="relative p-6 bg-white border shadow-sm cursor-pointer rounded-xl hover:shadow-xl group"
-                      onClick={() => navigate(`/doc/${doc._id}`, { state: { openTools: true } })}
-                      onContextMenu={(e) => handleContextMenu(e, doc._id)}
-                    >
+                    key={doc._id}
+                    className="relative p-5 bg-white border border-[#1EC6D7]/30 shadow-sm cursor-pointer rounded-2xl hover:shadow-xl hover:border-[#4066E0]/40 hover:bg-[#EAF6FF] transition-all group"
+                    onClick={() =>
+                      navigate(`/doc/${doc._id}`, { state: { openTools: true } })
+                    }
+                    onContextMenu={(e) => handleContextMenu(e, doc._id)}
+                  >
                     {/* Star at top-right */}
                     {doc.favorite && (
                       <Star
@@ -141,20 +140,19 @@ export default function Favorites() {
 
                     {/* Doc Icon */}
                     <div className="flex flex-col items-center">
-                      <FileText className="w-12 h-12 mb-3 text-gray-700 group-hover:text-purple-600" />
-                      <p className="text-sm font-semibold text-gray-800 truncate">
+                      <FileText className="w-10 h-10 mb-2 text-[#4066E0] group-hover:text-[#1EC6D7]" />
+                      <p className="text-xs font-semibold text-center text-gray-800 truncate">
                         {doc.name}
                       </p>
                     </div>
 
                     {/* Dropdown menu */}
                     {dropdownOpen === doc._id && (
-                      <div className="absolute z-20 p-2 -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg w-44 top-16 left-1/2 animate-fadeIn">
+                      <div className="absolute z-20 p-2 -translate-x-1/2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg w-40 top-14 left-1/2 animate-fadeIn">
                         <button
-                          className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
+                          className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Open the document and request that tools be visible
                             navigate(`/doc/${doc._id}`, { state: { openTools: true } });
                             setDropdownOpen(null);
                           }}
@@ -162,7 +160,7 @@ export default function Favorites() {
                           <Eye size={14} /> View
                         </button>
                         <button
-                          className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
+                          className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/doc/${doc._id}/edit`);
@@ -172,7 +170,7 @@ export default function Favorites() {
                           <Edit size={14} /> Edit
                         </button>
                         <button
-                          className="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-50"
+                          className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
                           onClick={(e) => {
                             e.stopPropagation();
                             shareDocAsPDF(doc);
@@ -182,7 +180,7 @@ export default function Favorites() {
                           <Share2 size={14} /> Share
                         </button>
                         <button
-                          className="flex items-center w-full gap-2 px-3 py-2 text-red-600 hover:bg-red-50"
+                          className="flex items-center w-full gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                           onClick={(e) => {
                             e.stopPropagation();
                             setDeleteTarget(doc);
@@ -194,7 +192,6 @@ export default function Favorites() {
                           <Trash2 size={14} /> Delete
                         </button>
 
-                        {/* Small Date (Bottom, Center) */}
                         <div className="pt-1 mt-2 text-xs text-center text-gray-500 border-t">
                           {doc.createdAt
                             ? new Date(doc.createdAt).toLocaleDateString()
@@ -214,23 +211,39 @@ export default function Favorites() {
         </div>
       </main>
       <Footer />
+
       {/* Delete confirmation modal */}
       {showDeleteModal && deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">Confirm deletion</h2>
-            <p className="mb-3 text-sm text-gray-600">Type <span className="font-bold">{deleteTarget.name}</span> to confirm deletion.</p>
+            <p className="mb-3 text-sm text-gray-600">
+              Type <span className="font-bold">{deleteTarget.name}</span> to confirm deletion.
+            </p>
             <input
               type="text"
               value={deleteInput}
               onChange={(e) => setDeleteInput(e.target.value)}
-              className="w-full px-3 py-2 mb-4 border rounded"
+              className="w-full px-3 py-2 mb-4 border rounded border-[#1EC6D7]/40"
               placeholder={deleteTarget.name}
             />
             <div className="flex justify-end gap-3">
-              <button className="px-4 py-2 bg-gray-100 rounded" onClick={() => { setShowDeleteModal(false); setDeleteTarget(null); setDeleteInput(""); }}>Cancel</button>
               <button
-                className={`px-4 py-2 text-white rounded ${deleteInput === deleteTarget.name ? 'bg-red-600 hover:bg-red-700' : 'bg-red-300 cursor-not-allowed'}`}
+                className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteTarget(null);
+                  setDeleteInput("");
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className={`px-4 py-2 text-white rounded ${
+                  deleteInput === deleteTarget.name
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-red-300 cursor-not-allowed"
+                }`}
                 disabled={deleteInput !== deleteTarget.name}
                 onClick={async () => {
                   await deleteDoc(deleteTarget._id);

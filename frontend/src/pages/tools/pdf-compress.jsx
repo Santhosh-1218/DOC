@@ -19,11 +19,10 @@ export default function PdfCompress() {
   const [isComplete, setIsComplete] = useState(false);
   const [error, setError] = useState(null);
   const [downloadUrl, setDownloadUrl] = useState(null);
-  const [resultInfo, setResultInfo] = useState(null); // ✅ new state for size info
+  const [resultInfo, setResultInfo] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔒 Get auth token from localStorage
   const getToken = () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -34,7 +33,6 @@ export default function PdfCompress() {
     return token;
   };
 
-  // 📂 Handle file selection
   const handleFileSelect = (selectedFile) => {
     if (selectedFile.type !== "application/pdf") {
       setError("Please select a valid PDF file");
@@ -50,20 +48,17 @@ export default function PdfCompress() {
     setResultInfo(null);
   };
 
-  // 🧲 Drag & Drop
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) handleFileSelect(droppedFile);
   };
 
-  // 📁 Input select
   const handleFileInput = (e) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) handleFileSelect(selectedFile);
   };
 
-  // 🧠 Process PDF
   const processFile = async (mode) => {
     if (!file) return;
     const token = getToken();
@@ -86,12 +81,10 @@ export default function PdfCompress() {
         }
       );
 
-      // ✅ Get file size info from headers
       const originalSize = response.headers["x-original-size-mb"];
       const compressedSize = response.headers["x-compressed-size-mb"];
       setResultInfo({ originalSize, compressedSize });
 
-      // ✅ Create download link
       const url = URL.createObjectURL(new Blob([response.data]));
       setDownloadUrl(url);
       setIsComplete(true);
@@ -110,7 +103,6 @@ export default function PdfCompress() {
     }
   };
 
-  // 💾 Download compressed file
   const downloadFile = () => {
     if (downloadUrl && file) {
       const a = document.createElement("a");
@@ -121,7 +113,6 @@ export default function PdfCompress() {
     }
   };
 
-  // ♻️ Reset tool
   const resetTool = () => {
     setFile(null);
     setIsProcessing(false);
@@ -134,48 +125,55 @@ export default function PdfCompress() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#EAF4FC] via-[#E1EDFB] to-[#CFE3FA]">
       <Header />
+
       <main className="flex-1 px-4 py-10 sm:px-6">
         <div className="max-w-4xl mx-auto">
           {/* 🔙 Back button */}
-          <div className="mb-6">
+          <div className="flex justify-start mb-8">
             <button
               onClick={() => navigate("/tools")}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
             >
               <ArrowLeft size={18} />
-              <span className="font-medium">Back to Tools</span>
+              <span className="text-sm font-medium sm:text-base">
+                Back to Tools
+              </span>
             </button>
           </div>
 
           {/* 🧾 Header */}
-          <div className="mb-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-              <File className="w-8 h-8 text-purple-600" />
+          <div className="mb-10 text-center">
+            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#4FC3F7]/30 to-[#3F51B5]/20">
+              <File className="w-10 h-10 text-[#3F51B5]" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            <h1 className="mb-3 text-3xl font-bold text-[#3F51B5] sm:text-4xl">
               PDF Compressor
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-base text-gray-700 sm:text-lg">
               Compress your PDF with different quality levels
             </p>
           </div>
 
           {/* 📤 File Upload / Status */}
-          <div className="p-8 bg-white shadow-lg rounded-2xl">
+          <div className="p-6 bg-white shadow-xl sm:p-10 rounded-2xl">
             {!file ? (
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
-                className="p-12 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-purple-400 hover:bg-purple-50"
+                className="p-10 text-center transition-all border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-[#3F51B5] hover:bg-[#E3F2FD]/40"
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-[#3F51B5]" />
                 <h3 className="mb-2 text-xl font-semibold text-gray-700">
                   Drop your PDF file here
                 </h3>
                 <p className="mb-4 text-gray-500">or click to browse files</p>
+                <div className="text-sm text-gray-400">
+                  <p>Supported format: PDF</p>
+                  <p>Maximum size: 20MB</p>
+                </div>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -187,19 +185,21 @@ export default function PdfCompress() {
             ) : (
               <>
                 {/* File Info */}
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
-                  <File className="w-8 h-8 text-purple-600" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">
-                      {file.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
+                <div className="flex flex-col items-center justify-between gap-4 p-4 rounded-lg sm:flex-row bg-[#F5F7FB]">
+                  <div className="flex items-center gap-4">
+                    <File className="w-8 h-8 text-[#3F51B5]" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 break-all">
+                        {file.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={resetTool}
-                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                    className="px-3 py-1 text-sm font-medium text-gray-600 transition-all rounded-md hover:text-[#1E88E5] hover:bg-[#E3F2FD]"
                   >
                     Remove
                   </button>
@@ -215,7 +215,7 @@ export default function PdfCompress() {
 
                 {/* Success message */}
                 {isComplete && (
-                  <div className="flex items-center justify-between gap-2 p-4 border border-green-200 rounded-lg bg-green-50">
+                  <div className="flex flex-col items-center gap-2 p-4 border border-green-200 rounded-lg sm:flex-row bg-green-50">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-500" />
                       <span className="text-green-700">
@@ -232,24 +232,24 @@ export default function PdfCompress() {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex flex-col gap-4 mt-4">
+                <div className="flex flex-col items-center gap-4 mt-6 sm:flex-row sm:justify-center sm:flex-wrap">
                   {!isProcessing && !isComplete && (
                     <>
                       <button
                         onClick={() => processFile("extreme")}
-                        className="px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700"
+                        className="w-full sm:w-auto px-6 py-3 font-medium text-white rounded-lg shadow-md bg-gradient-to-r from-[#E57373] to-[#C62828] hover:opacity-90 hover:scale-[1.02]"
                       >
                         Extreme Compression
                       </button>
                       <button
                         onClick={() => processFile("recommended")}
-                        className="px-6 py-3 text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+                        className="w-full sm:w-auto px-6 py-3 font-medium text-white rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.02]"
                       >
                         Recommended Compression
                       </button>
                       <button
                         onClick={() => processFile("low")}
-                        className="px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                        className="w-full sm:w-auto px-6 py-3 font-medium text-white rounded-lg shadow-md bg-gradient-to-r from-[#81C784] to-[#388E3C] hover:opacity-90 hover:scale-[1.02]"
                       >
                         Less Compression
                       </button>
@@ -259,23 +259,23 @@ export default function PdfCompress() {
                   {isProcessing && (
                     <button
                       disabled
-                      className="flex items-center gap-2 px-6 py-3 text-white bg-purple-400 rounded-lg cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 font-medium text-white rounded-lg bg-[#9FA8DA] cursor-not-allowed"
                     >
                       <Loader2 className="w-5 h-5 animate-spin" /> Compressing...
                     </button>
                   )}
 
                   {isComplete && (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col items-center gap-4 sm:flex-row">
                       <button
                         onClick={downloadFile}
-                        className="flex items-center justify-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white rounded-lg shadow-md bg-gradient-to-r from-[#4FC3F7] to-[#3F51B5] hover:opacity-90 hover:scale-[1.02]"
                       >
                         <Download className="w-5 h-5" /> Download Compressed PDF
                       </button>
                       <button
                         onClick={resetTool}
-                        className="px-6 py-3 text-white bg-gray-600 rounded-lg hover:bg-gray-700"
+                        className="flex items-center gap-2 px-6 py-3 font-medium text-white rounded-lg shadow-md bg-gradient-to-r from-gray-400 to-gray-600 hover:opacity-90"
                       >
                         Compress Another
                       </button>

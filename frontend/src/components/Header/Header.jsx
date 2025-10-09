@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaSignOutAlt, FaGlobe } from "react-icons/fa";
-import logo from "../../assets/logo2.jpg"; // update your logo path
+import logo from "../../assets/logo2.jpg"; // ✅ Update path if needed
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,6 +10,7 @@ export default function Header() {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
+  // ✅ Check login token and verify user
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -33,16 +34,17 @@ export default function Header() {
       .catch(() => setIsLoggedIn(!!token));
   }, []);
 
+  // ✅ Logout Handler
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    // Update UI state immediately and navigate without full reload
     setIsLoggedIn(false);
     setUserName("");
     setMenuOpen(false);
-    navigate("/", { replace: true }); // client-side navigation, no page reload
+    navigate("/", { replace: true });
   };
 
+  // ✅ Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -54,32 +56,34 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-10 py-5 shadow-lg bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-600">
-      {/* Left side */}
+    <header className="flex items-center justify-between px-10 py-5 shadow-lg bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7]">
+      {/* ---------------- Left Section (Logo + Title) ---------------- */}
       <div className="flex items-center gap-4 text-white">
         <img
           src={logo}
-          alt="Pro Doc Logo"
+          alt="Viadocs Logo"
           className="w-12 h-12 border-2 border-white rounded-full shadow-md"
           draggable="false"
         />
-        <span className="text-2xl font-bold tracking-wide">Pro Doc</span>
+        <span className="text-2xl font-bold tracking-wide">VIADOCS</span>
       </div>
 
-      {/* Right side */}
+      {/* ---------------- Right Section (Buttons / Menu) ---------------- */}
       <div className="relative flex items-center gap-6">
-         <button
-      onClick={() => navigate("/coming-soon")}
-      className="flex items-center gap-2 text-lg text-white transition hover:text-yellow-300"
-    >
-      <FaGlobe className="text-2xl" />
-      <span>App</span>
-    </button>
+        {/* 🌐 App Button */}
+        <button
+          onClick={() => navigate("/coming-soon")}
+          className="flex items-center gap-2 text-lg text-white transition hover:text-[#1EC6D7]"
+        >
+          <FaGlobe className="text-2xl" />
+          <span>App</span>
+        </button>
 
+        {/* 👤 Login or Profile */}
         {!isLoggedIn ? (
           <button
-            className="flex items-center gap-2 px-5 py-2 text-lg font-semibold text-white transition-transform transform rounded-full shadow-md bg-gradient-to-r from-violet-600 to-purple-600 hover:scale-105 hover:from-violet-700 hover:to-purple-700"
-            onClick={() => navigate("/login")} // ✅ navigate to login
+            onClick={() => navigate("/login")}
+            className="flex items-center gap-2 px-5 py-2 text-lg font-semibold text-white transition-transform transform rounded-full shadow-md bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7] hover:scale-105 hover:opacity-90"
           >
             <FaUserCircle className="text-2xl" />
             <span>Login / Signup</span>
@@ -87,26 +91,29 @@ export default function Header() {
         ) : (
           <div className="relative" ref={menuRef}>
             <button
-              className="flex items-center gap-2 text-lg font-medium text-white transition hover:text-yellow-300"
+              className="flex items-center gap-2 text-lg font-medium text-white transition hover:text-[#1EC6D7]"
               onClick={() => setMenuOpen((prev) => !prev)}
             >
               <FaUserCircle className="text-2xl" />
               <span>{userName}</span>
             </button>
 
+            {/* ▼ Dropdown Menu */}
             {menuOpen && (
-              <div className="absolute right-0 z-10 py-2 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg top-12 w-44">
+              <div className="absolute right-0 z-10 py-2 mt-2 bg-white border border-[#4066E0]/20 rounded-lg shadow-lg top-12 w-44 animate-fadeIn">
                 <button
-                  onClick={() => navigate("/profile")} // ✅ redirect to profile
-                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-gray-100"
+                  onClick={() => navigate("/profile")}
+                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-[#1EC6D7]/10"
                 >
-                  <FaUserCircle className="text-xl" /> My Profile
+                  <FaUserCircle className="text-xl text-[#4066E0]" />
+                  <span>My Profile</span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-gray-100"
+                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-[#1EC6D7]/10"
                 >
-                  <FaSignOutAlt className="text-xl" /> Logout
+                  <FaSignOutAlt className="text-xl text-[#6A3FD7]" />
+                  <span>Logout</span>
                 </button>
               </div>
             )}
