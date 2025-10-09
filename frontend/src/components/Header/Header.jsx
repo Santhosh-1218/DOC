@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaSignOutAlt, FaGlobe } from "react-icons/fa";
-import logo from "../../assets/logo2.jpg"; // ✅ Update path if needed
+import logo from "../../assets/logo2.jpg";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,7 +10,6 @@ export default function Header() {
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
-  // ✅ Check login token and verify user
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -34,7 +33,6 @@ export default function Header() {
       .catch(() => setIsLoggedIn(!!token));
   }, []);
 
-  // ✅ Logout Handler
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -44,7 +42,6 @@ export default function Header() {
     navigate("/", { replace: true });
   };
 
-  // ✅ Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -56,63 +53,70 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-10 py-5 shadow-lg bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7]">
-      {/* ---------------- Left Section (Logo + Title) ---------------- */}
-      <div className="flex items-center gap-4 text-white">
+    <header className="flex flex-wrap items-center justify-between w-full px-4 py-3 sm:px-8 md:px-10 bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7] shadow-lg">
+      {/* ---------- Left Section: Logo + Title ---------- */}
+      <div
+        className="flex items-center gap-3 text-white cursor-pointer"
+        onClick={() => navigate("/")}
+      >
         <img
           src={logo}
-          alt="Viadocs Logo"
-          className="w-12 h-12 border-2 border-white rounded-full shadow-md"
+          alt="VIADOCS Logo"
+          className="w-10 h-10 border-2 border-white rounded-full shadow-md sm:w-12 sm:h-12"
           draggable="false"
         />
-        <span className="text-2xl font-bold tracking-wide">VIADOCS</span>
+        <span className="text-xl font-bold tracking-wide sm:text-2xl">
+          VIADOCS
+        </span>
+  
       </div>
 
-      {/* ---------------- Right Section (Buttons / Menu) ---------------- */}
-      <div className="relative flex items-center gap-6">
-        {/* 🌐 App Button */}
+      {/* ---------- Right Section: App + Login/Profile ---------- */}
+      <div className="flex items-center gap-3 mt-3 sm:gap-6 sm:mt-0">
+        {/* 🌐 App button (hidden text on small screens) */}
         <button
           onClick={() => navigate("/coming-soon")}
-          className="flex items-center gap-2 text-lg text-white transition hover:text-[#1EC6D7]"
+          className="flex items-center gap-1 text-sm font-medium text-white transition sm:text-lg hover:text-[#1EC6D7]"
         >
-          <FaGlobe className="text-2xl" />
-          <span>App</span>
+          <FaGlobe className="text-base sm:text-2xl" />
+          <span className="hidden sm:inline">App</span>
         </button>
 
-        {/* 👤 Login or Profile */}
+        {/* 👤 Login / Profile */}
         {!isLoggedIn ? (
           <button
             onClick={() => navigate("/login")}
-            className="flex items-center gap-2 px-5 py-2 text-lg font-semibold text-white transition-transform transform rounded-full shadow-md bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7] hover:scale-105 hover:opacity-90"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-transform transform rounded-full shadow-md bg-gradient-to-r from-[#1EC6D7] via-[#4066E0] to-[#6A3FD7] hover:scale-105 hover:opacity-90 sm:px-5 sm:py-2 sm:text-base"
           >
-            <FaUserCircle className="text-2xl" />
+            <FaUserCircle className="text-lg sm:text-2xl" />
             <span>Login / Signup</span>
           </button>
         ) : (
           <div className="relative" ref={menuRef}>
             <button
-              className="flex items-center gap-2 text-lg font-medium text-white transition hover:text-[#1EC6D7]"
+              className="flex items-center gap-2 text-sm font-medium text-white transition sm:text-lg hover:text-[#1EC6D7]"
               onClick={() => setMenuOpen((prev) => !prev)}
             >
-              <FaUserCircle className="text-2xl" />
-              <span>{userName}</span>
+              <FaUserCircle className="text-lg sm:text-2xl" />
+              <span className="truncate max-w-[100px] sm:max-w-none">
+                {userName}
+              </span>
             </button>
 
-            {/* ▼ Dropdown Menu */}
             {menuOpen && (
-              <div className="absolute right-0 z-10 py-2 mt-2 bg-white border border-[#4066E0]/20 rounded-lg shadow-lg top-12 w-44 animate-fadeIn">
+              <div className="absolute right-0 z-10 py-2 mt-2 bg-white border border-[#4066E0]/20 rounded-lg shadow-lg top-10 sm:top-12 w-40 sm:w-44 animate-fadeIn">
                 <button
                   onClick={() => navigate("/profile")}
-                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-[#1EC6D7]/10"
+                  className="flex items-center w-full gap-2 px-4 py-2 text-sm text-gray-700 transition sm:text-base hover:bg-[#1EC6D7]/10"
                 >
-                  <FaUserCircle className="text-xl text-[#4066E0]" />
+                  <FaUserCircle className="text-[#4066E0]" />
                   <span>My Profile</span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center w-full gap-2 px-4 py-2 text-lg text-gray-700 transition hover:bg-[#1EC6D7]/10"
+                  className="flex items-center w-full gap-2 px-4 py-2 text-sm text-gray-700 transition sm:text-base hover:bg-[#1EC6D7]/10"
                 >
-                  <FaSignOutAlt className="text-xl text-[#6A3FD7]" />
+                  <FaSignOutAlt className="text-[#6A3FD7]" />
                   <span>Logout</span>
                 </button>
               </div>

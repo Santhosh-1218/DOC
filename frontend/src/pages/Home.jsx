@@ -92,6 +92,26 @@ export default function Home() {
     }
   }, [token, isLoggedIn]);
 
+  // ✅ Close dropdown on outside tap or scroll (mobile fix)
+useEffect(() => {
+  const handleOutsideTouch = (e) => {
+    if (!e.target.closest(".doc-dropdown")) {
+      setDropdownOpen(null);
+    }
+  };
+
+  const handleScroll = () => setDropdownOpen(null);
+
+  document.addEventListener("touchstart", handleOutsideTouch);
+  document.addEventListener("scroll", handleScroll, true);
+
+  return () => {
+    document.removeEventListener("touchstart", handleOutsideTouch);
+    document.removeEventListener("scroll", handleScroll, true);
+  };
+}, []);
+
+
   useEffect(() => {
     fetchDocs();
   }, [fetchDocs]);
@@ -187,32 +207,37 @@ export default function Home() {
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
-          <div className="p-8 mb-10 text-center bg-white border border-[#1EC6D7]/30 shadow-lg rounded-2xl">
-            <h2 className="text-3xl font-extrabold text-gray-900">
-              Welcome to <span className="text-[#4066E0]">Pro Doc</span>
-            </h2>
-            <p className="mt-3 text-lg text-gray-600">
-              Create professional documents, collaborate with your team, and
-              manage projects efficiently.
-            </p>
+          {/* Welcome Section */}
+<div className="p-8 mb-10 text-center bg-white border border-[#1EC6D7]/30 shadow-lg rounded-2xl">
+  <h2 className="text-3xl font-extrabold text-gray-900">
+    Welcome to <span className="text-[#4066E0]">Pro Doc</span>
+  </h2>
+  <p className="mt-3 text-lg text-gray-600">
+    Create professional documents, collaborate with your team, and
+    manage projects efficiently.
+  </p>
 
-            {!isLoggedIn && (
-              <div className="flex justify-center gap-6 mt-8">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="px-6 py-2 text-white transition-all rounded-full shadow-md bg-[#4066E0] hover:bg-[#1EC6D7] hover:shadow-lg"
-                >
-                  Get Started - Login
-                </button>
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="px-6 py-2 text-[#4066E0] transition-all border border-[#1EC6D7] rounded-full shadow-sm hover:bg-[#1EC6D7]/10 hover:text-[#1EC6D7] hover:shadow-md"
-                >
-                  Create Account
-                </button>
-              </div>
-            )}
-          </div>
+  {!isLoggedIn && (
+    <div className="flex flex-col items-center justify-center gap-3 mt-8 sm:flex-row sm:gap-6">
+      {/* Login Button */}
+      <button
+        onClick={() => navigate("/login")}
+        className="px-5 py-2 text-sm font-medium text-white transition-all rounded-full shadow-md bg-[#4066E0] hover:bg-[#1EC6D7] hover:shadow-lg sm:px-6 sm:py-2 sm:text-base"
+      >
+        Get Started - Login
+      </button>
+
+      {/* Create Account Button */}
+      <button
+        onClick={() => navigate("/signup")}
+        className="px-5 py-2 text-sm font-medium text-[#4066E0] transition-all border border-[#1EC6D7] rounded-full shadow-sm hover:bg-[#1EC6D7]/10 hover:text-[#1EC6D7] hover:shadow-md sm:px-6 sm:py-2 sm:text-base"
+      >
+        Create Account
+      </button>
+    </div>
+  )}
+</div>
+
 
           {/* Top Section */}
           <div className="grid grid-cols-1 gap-6 mb-12 lg:grid-cols-2">
@@ -351,10 +376,11 @@ export default function Home() {
                           </button>
 
                           {dropdownOpen === doc._id && (
-                            <div
-                              className="absolute right-0 z-10 mt-2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg w-36 animate-fadeIn"
-                              onMouseLeave={handleMouseLeave}
-                            >
+  <div
+    className="doc-dropdown absolute right-0 z-10 mt-2 bg-white border border-[#1EC6D7]/30 rounded-lg shadow-lg w-36 animate-fadeIn"
+    onMouseLeave={handleMouseLeave}
+  >
+
                               <button
                                 className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-[#E6F9FC]"
                                 onClick={() => navigate(`/doc/${doc._id}`)}

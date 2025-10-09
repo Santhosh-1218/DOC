@@ -8,7 +8,7 @@ import {
   ArrowLeft, Star, Download, Save, FileText, FolderOpen, Share2, 
   Trash2, Edit3, Undo, Redo, Scissors, Copy, Clipboard, MousePointer,
   Maximize, Image, Table, Hash, Link, Bold, Italic, Underline,
-  Strikethrough, AlignLeft, AlignCenter, 
+  Strikethrough, AlignLeft, AlignCenter, MoreHorizontal,
   AlignRight, AlignJustify, List, ListOrdered, Indent, Outdent,
   Palette, Plus, HelpCircle, Keyboard, Info, Printer, Edit
 } from 'lucide-react';
@@ -30,6 +30,7 @@ const CreateDoc = () => {
   
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [_saved, setSaved] = useState(true);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false);
   const [docId, setDocId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(true);
   const [textColor, setTextColor] = useState("#000000");
@@ -37,6 +38,7 @@ const CreateDoc = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [colorPickerType, setColorPickerType] = useState('text');
   const [showImageMenu, setShowImageMenu] = useState(false);
+  const [showMobileMore, setShowMobileMore] = useState(false);
 const fileInputRef = useRef(null);
 const [imageUrl, setImageUrl] = useState("");
 const [selectedImage, setSelectedImage] = useState(null);
@@ -122,6 +124,13 @@ useEffect(() => {
 
   editor.addEventListener("click", handleClick);
   return () => editor.removeEventListener("click", handleClick);
+}, []);
+
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth < 640);
+  window.addEventListener('resize', handleResize);
+  handleResize();
+  return () => window.removeEventListener('resize', handleResize);
 }, []);
 
 
@@ -634,6 +643,8 @@ const handleImageUpload = async (event) => {
       if (imgEl) {
         imgEl.src = data.url + (data.url.includes("?") ? "&" : "?") + `t=${Date.now()}`;
         imgEl.removeAttribute('id');
+        // ensure the uploaded image is visible on mobile
+        try { imgEl.classList.add('doc-image'); imgEl.style.maxWidth = '100%'; imgEl.style.height = 'auto'; imgEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e){}
       }
     } else {
       console.error('Upload failed:', data);
@@ -1033,11 +1044,11 @@ const shareDocument = async () => {
       {!isFullscreen && <Header />}
       
       <div className="flex flex-col h-screen">
-        {/* Top Header */}
-<div className="px-4 py-2 bg-white border-b border-gray-200">
-  <div className="flex items-center justify-between">
+        {/* Top Header - responsive: stack on small screens */}
+<div className="px-3 py-2 bg-white border-b border-gray-200">
+  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     {/* Left Section */}
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-2">
       {/* Back button */}
       <button
         onClick={() => navigate('/home')}
@@ -1046,65 +1057,63 @@ const shareDocument = async () => {
         <ArrowLeft className="w-5 h-5 text-gray-700" />
       </button>
 
-    {/* Document Name + Favorite */}
-     <div className="flex items-center space-x-2">
-  <input
-    type="text"
-    value={documentName}
-    onChange={(e) => setDocumentName(e.target.value)}
-    className={`px-2 py-1 text-xl font-semibold rounded outline-none
-      ${isEditMode
-        ? "text-gray-900 bg-white border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-        : "text-gray-900 bg-transparent border-none"
-      }`}
-    readOnly={!isEditMode}
-  />
+      {/* Document Name + Favorite */}
+      <div className="flex items-center min-w-0 space-x-2">
+        <input
+          type="text"
+          value={documentName}
+          onChange={(e) => setDocumentName(e.target.value)}
+          className={`px-2 py-1 text-lg sm:text-xl font-semibold rounded outline-none truncate w-full
+            ${isEditMode
+              ? "text-gray-900 bg-white border border-transparent focus:border-primary focus:ring-2 focus:ring-primary"
+              : "text-gray-900 bg-transparent border-none"
+            }`}
+          readOnly={!isEditMode}
+        />
 
-  <button
-    onClick={toggleFavorite}
-    className="p-1 rounded hover:bg-gray-100"
-  >
-    <Star
-      className={`w-5 h-5 ${
-        isFavorite
-          ? "text-yellow-400 fill-yellow-400"
-          : "text-gray-400"
-      }`}
-    />
-  </button>
-</div>
-
-
-
+        <button
+          onClick={toggleFavorite}
+          className="p-1 rounded hover:bg-gray-100"
+        >
+          <Star
+            className={`w-5 h-5 ${
+              isFavorite
+                ? "text-yellow-400 fill-yellow-400"
+                : "text-gray-400"
+            }`}
+          />
+        </button>
+      </div>
     </div>
 
-    {/* Right Section (Buttons) */}
-    <div className="flex items-center space-x-2">
+    {/* Right Section (Buttons) - collapse labels on small screens */}
+    <div className="flex items-center justify-end gap-2">
       {/* Download */}
       <button
         onClick={downloadAsPDF}
-        className="flex items-center px-3 py-2 space-x-1 text-gray-700 transition-colors rounded-lg hover:bg-gray-100"
+        className="flex items-center px-2 py-2 space-x-1 text-gray-700 transition-colors rounded-lg sm:px-3 hover:bg-gray-100"
+        aria-label="Download"
       >
         <Download className="w-4 h-4" />
         <span className="hidden sm:inline">Download</span>
       </button>
 
-      {/* Save / Edit */}
+      {/* Save / Edit (buttons larger on mobile for touch) */}
       {isEditMode ? (
         <button
           onClick={saveDocument}
-          className="flex items-center px-4 py-2 space-x-1 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+          className="flex items-center px-3 py-2 space-x-1 text-white transition-colors rounded-lg sm:px-4 bg-primary hover:opacity-95"
         >
           <Save className="w-4 h-4" />
-          <span>Save</span>
+          <span className="hidden xs:inline">Save</span>
         </button>
       ) : (
         <button
           onClick={() => setIsEditMode(true)}
-          className="flex items-center px-4 py-2 space-x-1 text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
+          className="flex items-center px-3 py-2 space-x-1 text-white transition-colors bg-green-600 rounded-lg sm:px-4 hover:opacity-95"
         >
           <Edit className="w-4 h-4" />
-          <span>Edit</span>
+          <span className="hidden xs:inline">Edit</span>
         </button>
       )}
     </div>
@@ -1114,13 +1123,13 @@ const shareDocument = async () => {
 
   {/* Menu Bar */}
         {isEditMode && (
-          <div className="px-4 bg-white border-b border-gray-200">
-            <div className="flex items-center py-2 space-x-6 text-sm">
+          <div className="px-3 bg-white border-b border-gray-200 sm:px-4">
+            <div className="flex flex-wrap items-center gap-2 py-2 text-sm">
               {/* File Menu */}
 {/* File Menu */}
 <div className="relative">
   <button
-    className="px-2 py-1 rounded hover:bg-gray-100"
+    className="px-2 py-1 text-sm rounded hover:bg-gray-100"
     onClick={(e) => {
       e.stopPropagation();
       setActiveDropdown(activeDropdown === "file" ? null : "file");
@@ -1431,7 +1440,7 @@ const shareDocument = async () => {
         </button>
 
         {showLinkMenu && (
-          <div className="absolute z-50 w-64 p-3 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+          <div className={`absolute z-50 w-64 p-3 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg ${isMobile ? 'inset-0 m-4 w-auto h-auto overflow-auto' : ''}`}>
             <input
               type="text"
               placeholder="Link Text"
@@ -1739,18 +1748,18 @@ const shareDocument = async () => {
               <select 
                 value={zoom} 
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                className="hidden px-2 py-1 text-sm border border-gray-300 rounded sm:inline-block"
               >
                 {zoomOptions.map(z => (
                   <option key={z} value={z}>{z}%</option>
                 ))}
               </select>
               
-              <div className="w-px h-6 mx-2 bg-gray-300"></div>
+              <div className="hidden w-px h-6 mx-2 bg-gray-300 sm:block"></div>
               
 <select
   onChange={(e) => formatHeading(e.target.value)}
-  className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[140px] focus:ring-2 focus:ring-purple-500"
+  className="hidden sm:inline-block border border-gray-300 rounded px-2 py-1 text-sm min-w-[140px] focus:ring-2 focus:ring-purple-500"
 >
   <option value="p">Normal text</option>
   <option value="1">Heading 1</option>
@@ -1768,7 +1777,7 @@ const shareDocument = async () => {
                   setFontFamily(e.target.value);
                   formatText('fontName', e.target.value);
                 }}
-                className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[100px]"
+                className="hidden sm:inline-block border border-gray-300 rounded px-2 py-1 text-sm min-w-[100px]"
               >
                 {fontFamilies.map(font => (
                   <option key={font} value={font}>{font}</option>
@@ -1782,7 +1791,7 @@ const shareDocument = async () => {
                   formatText('fontSize', '3');
                   formatText('insertHTML', `<span style="font-size: ${e.target.value}px">${window.getSelection().toString()}</span>`);
                 }}
-                className="w-16 px-2 py-1 text-sm border border-gray-300 rounded"
+                className="hidden w-16 px-2 py-1 text-sm border border-gray-300 rounded sm:inline-block"
               >
                 {fontSizes.map(size => (
                   <option key={size} value={size}>{size}</option>
@@ -1891,19 +1900,60 @@ const shareDocument = async () => {
   )}
 </div>
 
-             {/* Image Insert Dropdown */}
+             {/* Image Insert Dropdown (desktop) + Mobile More menu */}
 <div className="relative">
   <button 
-  onClick={() => setShowImageMenu(true)} 
-  className="flex items-center w-full px-3 py-2 hover:bg-gray-50"
->
-  <Image className="w-4 h-4 mr-2" /> Image
-</button>
+    onClick={() => setShowImageMenu(true)} 
+    className="items-center hidden px-3 py-2 sm:flex hover:bg-gray-50"
+  >
+    <Image className="w-4 h-4 mr-2" /> Image
+  </button>
 
-  
+  {/* Mobile 'More' overflow button */}
+  <button
+    onClick={() => setShowMobileMore((s) => !s)}
+    className="p-1 rounded sm:hidden hover:bg-gray-100"
+    title="More"
+  >
+    <MoreHorizontal className="w-5 h-5" />
+  </button>
+
+  {/* Mobile overflow menu */}
+  {showMobileMore && (
+    <div className="absolute z-50 p-2 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg right-2 sm:hidden">
+      <div className="flex flex-col w-56 space-y-2">
+        <label className="text-xs text-gray-500">Zoom</label>
+        <select value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="px-2 py-1 border rounded">
+          {zoomOptions.map(z => (<option key={z} value={z}>{z}%</option>))}
+        </select>
+
+        <label className="text-xs text-gray-500">Style</label>
+        <select onChange={(e) => formatHeading(e.target.value)} className="px-2 py-1 border rounded">
+          <option value="p">Normal text</option>
+          <option value="1">Heading 1</option>
+          <option value="2">Heading 2</option>
+          <option value="3">Heading 3</option>
+        </select>
+
+        <label className="text-xs text-gray-500">Font</label>
+        <select value={fontFamily} onChange={(e) => { setFontFamily(e.target.value); formatText('fontName', e.target.value); }} className="px-2 py-1 border rounded">
+          {fontFamilies.map(f => (<option key={f} value={f}>{f}</option>))}
+        </select>
+
+        <label className="text-xs text-gray-500">Size</label>
+        <select value={fontSize} onChange={(e) => { setFontSize(Number(e.target.value)); formatText('fontSize','3'); formatText('insertHTML', `<span style="font-size: ${e.target.value}px">${window.getSelection().toString()}</span>`); }} className="px-2 py-1 border rounded">
+          {fontSizes.map(s => (<option key={s} value={s}>{s}</option>))}
+        </select>
+
+  <button onClick={() => { openFilePicker(); setShowMobileMore(false); }} className="px-2 py-1 text-left border rounded">Insert Image</button>
+        <button onClick={() => { setShowLinkMenu(true); setShowMobileMore(false); }} className="px-2 py-1 text-left border rounded">Insert Link</button>
+        <button onClick={() => { setShowColorPicker(true); setShowMobileMore(false); }} className="px-2 py-1 text-left border rounded">Text Color</button>
+      </div>
+    </div>
+  )}
 
   {showImageMenu && (
-    <div className="absolute z-50 w-64 p-3 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+    <div className={`absolute z-50 w-64 p-3 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg ${isMobile ? 'inset-0 m-4 w-auto h-auto overflow-auto' : ''}`}>
       {/* URL Input */}
       <input
         type="text"
@@ -1967,8 +2017,8 @@ const shareDocument = async () => {
         )}
 
         {/* Color Picker */}
-       {showColorPicker && (
-    <div className="absolute z-50 p-4 mt-10 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg left-1/2">
+    {showColorPicker && (
+    <div className={`absolute z-50 p-4 mt-10 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg left-1/2 ${isMobile ? 'inset-0 left-0 top-0 m-4 transform-none' : ''}`}>
       <div className="grid grid-cols-10 gap-1 mb-2">
         {colors.map((color) => (
           <button
@@ -1999,30 +2049,30 @@ const shareDocument = async () => {
 
         {/* Document Area */}
         <div className="flex-1 overflow-auto bg-gray-100">
-          <div className="max-w-4xl py-8 mx-auto">
-            <div className="bg-white shadow-lg mx-4 min-h-[800px]" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}>
+          <div className="px-3 py-6 sm:px-0">
+            <div className={`bg-white shadow-lg mx-auto min-h-[600px] ${isMobile ? 'w-full' : 'max-w-4xl'}`} style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}>
              <div
   ref={editorRef}
   contentEditable={isEditMode}
   suppressContentEditableWarning={true}
-  className="editor prose prose-purple min-h-[800px] outline-none"
+  className={`editor prose prose-purple outline-none ${isMobile ? 'min-h-[400px] p-4' : 'min-h-[800px]'}`}
   style={{
     fontFamily: fontFamily,
     fontSize: `${fontSize}px`,
     lineHeight: 1.6,
     whiteSpace: "pre-wrap",
     wordBreak: "break-word",
-    maxWidth: "816px",   // ✅ A4 page width
-    paddingTop: `${pageMargins.top}px`,
-    paddingBottom: `${pageMargins.bottom}px`,
-    paddingLeft: `${pageMargins.left}px`,
-    paddingRight: `${pageMargins.right}px`,
+    maxWidth: isMobile ? '100%' : "816px",   // use full-width on mobile
+    paddingTop: isMobile ? 24 : `${pageMargins.top}px`,
+    paddingBottom: isMobile ? 24 : `${pageMargins.bottom}px`,
+    paddingLeft: isMobile ? 16 : `${pageMargins.left}px`,
+    paddingRight: isMobile ? 16 : `${pageMargins.right}px`,
     marginLeft: pageAlign === 'left' ? '0' : pageAlign === 'center' ? 'auto' : 'auto',
     marginRight: pageAlign === 'left' ? 'auto' : pageAlign === 'center' ? 'auto' : '0',
   }}
   onInput={() => setSaved(false)}
   dangerouslySetInnerHTML={{ __html: docContent }}
-/>
+/> 
 
 
 
