@@ -1,7 +1,11 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "viadocs",
+  "version": "1.0.0",
   "private": true,
+  "description": "ViaDocs — Smart Document Creator and PDF Tool Suite built with React, TailwindCSS, and Node.js.",
+  "author": "ViaDocs Team",
+  "license": "MIT",
+
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^39.0.2",
     "@ckeditor/ckeditor5-react": "^11.0.0",
@@ -30,6 +34,7 @@
     "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
+
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -37,12 +42,11 @@
     "eject": "react-scripts eject",
     "dev": "npm start"
   },
+
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
+
   "browserslist": {
     "production": [
       ">0.2%",
@@ -55,6 +59,7 @@
       "last 1 safari version"
     ]
   },
+
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.27.1",
     "autoprefixer": "^10.4.21",

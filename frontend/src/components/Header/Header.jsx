@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaSignOutAlt, FaGlobe } from "react-icons/fa";
-import logo from "../../assets/logo2.jpg";
+import logo from "../../assets/logo2.png";
+
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

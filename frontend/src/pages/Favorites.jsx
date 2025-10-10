@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
@@ -99,14 +100,16 @@ export default function Favorites() {
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-6xl mx-auto">
-          {/* Back Button */}
-          <button
-            onClick={() => navigate("/home")}
-            className="flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-gray-700 bg-white border border-[#1EC6D7]/40 rounded-full shadow hover:bg-[#EAF6FF] hover:shadow-md transition-all"
-          >
-            <ArrowLeft size={16} />
-            Back
-          </button>
+         {/* Back Button */}
+                                      <div className="flex justify-start mb-8">
+                                        <button
+                                          onClick={() => navigate("/home")}
+                                          className="flex items-center gap-2 px-4 py-2 text-white transition-all rounded-lg shadow-md bg-gradient-to-r from-[#4066E0] to-[#1EC6D7] hover:opacity-90 hover:scale-[1.03] active:scale-[0.97]"
+                                        >
+                                          <ArrowLeft size={18} />
+                                          <span className="text-sm font-medium sm:text-base">Back</span>
+                                        </button>
+                                      </div>
 
           {/* Title */}
           <h2 className="mb-8 text-2xl font-extrabold text-center text-gray-900">
