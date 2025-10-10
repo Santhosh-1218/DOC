@@ -40,6 +40,7 @@ console.log("🗂 Serving uploads from:", uploadsDir);
 
 // ✅ Routes
 app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/docs", docsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/profile", profileRoutes);

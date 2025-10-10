@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -13,8 +16,9 @@ import Feedback from "./pages/Feedback";
 import HelpCenter from "./pages/HelpCenter";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ComingSoon from "./pages/ComingSoon";
+import ForgotPassword from "./pages/ForgotPassword";
 
-// 🛠 Import all tools (updated list)
+// 🛠 Tools
 import PdfToWord from "./pages/tools/pdf-to-word";
 import WordToPdf from "./pages/tools/word-to-pdf";
 import PdfMerge from "./pages/tools/pdf-merge";
@@ -23,7 +27,6 @@ import PdfCompress from "./pages/tools/pdf-compress";
 import PdfEditor from "./pages/tools/pdf-editor";
 import ImageToPdf from "./pages/tools/image-to-pdf";
 import PdfToImage from "./pages/tools/pdf-to-image";
-
 import PasswordProtect from "./pages/tools/password-protect";
 import UnlockPdf from "./pages/tools/unlock-pdf";
 import ExcelToPdf from "./pages/tools/excel-to-pdf";
@@ -34,6 +37,14 @@ import DocTranslator from "./pages/tools/doc-translator";
 function App() {
   return (
     <Router>
+     <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        hideProgressBar={false}
+        pauseOnHover
+        theme="colored"
+      />
+
       <Routes>
         {/* 🌐 General Pages */}
         <Route path="/" element={<Home />} />
@@ -48,12 +59,12 @@ function App() {
         <Route path="/tools" element={<Tools />} />
         <Route path="/DocAI" element={<DocAI />} />
         <Route path="/about" element={<About />} />
-       <Route path="/contact" element={<Contact />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-       <Route path="/coming-soon" element={<ComingSoon />} />
-
+        <Route path="/coming-soon" element={<ComingSoon />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* 🛠 Tool Pages */}
         <Route path="/tools/pdf-to-word" element={<PdfToWord />} />
